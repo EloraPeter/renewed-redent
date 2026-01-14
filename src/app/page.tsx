@@ -4,8 +4,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion"; // for subtle animations
-import mochihappy from "@/public/mochi-happy.png"; // example mascot image
-import mochistudy from "@/public/mochi-study.png";
+import mochihappy from "/Projects/My Websites/student-class-reminder/renewed-redent/public/mochi-happy.png"; // example mascot image
+import mochistudy from "/Projects/My Websites/student-class-reminder/renewed-redent/public/mochi-study.png";
 
 export default function Home() {
   return (

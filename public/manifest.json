@@ -6,7 +6,6 @@
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "background_color": "#ffffff",
-  "theme_color": "#f97316",          
   "orientation": "portrait-primary",
   "icons": [
     {
