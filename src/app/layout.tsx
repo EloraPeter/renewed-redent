@@ -1,37 +1,26 @@
-"use client";
-
-import type { Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
-import { Toaster } from "react-hot-toast";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
+import type { Metadata } from 'next';
+import './globals.css';
+import ClientProviders from './ClientProviders'; // Client-only wrapper for React Context
 
 export const metadata: Metadata = {
-  title: "MochiDo – Your Productivity Hamster",
-  description: "Manage your academic life with Mochi the Hamster!",
+  title: 'MochiDo – Productivity with Mochi',
+  description: 'Student & lecturer companion with emotional hamster mascot',
+  manifest: '/manifest.json',
+  themeColor: '#f97316',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'MochiDo',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        <SessionProvider>
-          {children}
-          <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
-        </SessionProvider>
+      <body>
+        {/* Wrap children in client component for SessionProvider / Toaster */}
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
 }
-
-
