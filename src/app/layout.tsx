@@ -24,7 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="antialiased">
         <SessionProvider>
-        {children}</SessionProvider>
+          {children}
+          <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+        </SessionProvider>
       </body>
     </html>
   );
