@@ -29,7 +29,7 @@ export default function Login() {
       setLoading(false);
     } else {
       toast.success("Logged in!");
-      router.push("/dashboard"); // Middleware will handle role-based redirect
+      router.replace("/role-select");
     }
   }
 
