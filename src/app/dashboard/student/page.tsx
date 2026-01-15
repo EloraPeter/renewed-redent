@@ -81,10 +81,11 @@ export default async function StudentDashboard() {
 
       {/* Client component gets real props */}
       <NotificationScheduler
-        wakeUpTime={wakeUpTime}
-        todayClasses={todayClasses}
-        upcomingAssignments={upcomingAssignments}
-      />
+  role="student"
+  wakeUpTime={wakeUpTime}
+  todayClasses={todayClasses}
+  upcomingAssignments={upcomingAssignments}
+/>
     </div>
   );
 }
