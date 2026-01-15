@@ -1,4 +1,3 @@
-// src/app/page.tsx
 "use client";
 
 import Image from "next/image";
@@ -8,156 +7,145 @@ import mochihappy from "/Projects/My Websites/student-class-reminder/renewed-red
 import mochistudy from "/Projects/My Websites/student-class-reminder/renewed-redent/public/mochi-study.png";
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0 },
 };
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 via-orange-100 to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50 via-orange-100 to-orange-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-gray-800 dark:text-gray-100 overflow-x-hidden">
 
       {/* ───────── HERO ───────── */}
-      <section className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <section className="relative max-w-7xl mx-auto px-5 pt-16 pb-20 md:pt-24 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
+        
+        {/* Glow blob */}
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-400/20 blur-3xl rounded-full" />
+
         <motion.div
           initial="hidden"
           animate="visible"
           variants={fadeUp}
           transition={{ duration: 0.6 }}
-          className="space-y-6"
+          className="space-y-6 z-10"
         >
-          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-orange-700 dark:text-orange-400">
-            Study smarter.  
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
+            Stay consistent.  
             <br />
             Stay motivated.  
             <br />
-            <span className="text-orange-600 dark:text-orange-300">
-              Mochi’s got you 🐹
+            <span className="text-orange-600 dark:text-orange-400">
+              Mochi watches your back 🐹
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 max-w-xl">
-            MochiDo is a smart academic reminder and motivation system designed
-            for students and lecturers. Track courses, assignments, routines,
-            deadlines — and get emotional support from Mochi when things get tough.
+          <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 max-w-xl">
+            MochiDo is a gentle but powerful academic reminder system for students
+            and lecturers — combining smart scheduling, emotional motivation,
+            and adorable accountability.
           </p>
 
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href="/signup"
-              className="px-8 py-4 bg-green-600 text-white font-semibold rounded-xl shadow-lg hover:scale-105 hover:bg-green-700 transition"
-            >
-              Get Started Free
-            </Link>
+          <div className="flex flex-col sm:flex-row gap-4 pt-2">
+            <GlowButton href="/signup" label="Get Started Free" />
             <Link
               href="/login"
-              className="px-8 py-4 bg-orange-600 text-white font-semibold rounded-xl shadow-lg hover:scale-105 hover:bg-orange-700 transition"
+              className="px-8 py-4 rounded-xl border border-orange-400/40 text-orange-700 dark:text-orange-300 hover:bg-orange-400/10 transition text-center"
             >
               Login
             </Link>
           </div>
         </motion.div>
 
+        {/* Mascot */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative w-full h-[360px] md:h-[420px]"
+          className="relative w-full h-[280px] sm:h-[340px] md:h-[420px]"
         >
+          <div className="absolute inset-0 bg-orange-400/30 blur-3xl rounded-full" />
           <Image
             src={mochihappy}
             alt="Mochi mascot"
             fill
-            className="object-contain drop-shadow-2xl"
+            className="object-contain relative z-10"
           />
         </motion.div>
       </section>
 
-      {/* ───────── WHO IT’S FOR ───────── */}
-      <section className="py-20 bg-white/70 dark:bg-gray-900/70 backdrop-blur">
+      {/* ───────── STATS ───────── */}
+      <section className="py-14 bg-white/70 dark:bg-gray-900/70 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <Stat value="24/7" label="Smart Reminders" />
+          <Stat value="100%" label="Deadline Coverage" />
+          <Stat value="0%" label="Nagging Stress" />
+          <Stat value="∞" label="Mochi Support" />
+        </div>
+      </section>
+
+      {/* ───────── HOW IT WORKS ───────── */}
+      <section className="py-20">
         <div className="max-w-6xl mx-auto px-6">
-          <motion.h2
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-            className="text-4xl font-bold text-center text-orange-600 dark:text-orange-400 mb-12"
-          >
-            Built for real academic life
-          </motion.h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-orange-600">
+            How MochiDo works
+          </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <AudienceCard
-              title="For Students"
-              points={[
-                "Never miss assignments or tests again",
-                "Daily reminders that feel human, not robotic",
-                "Build healthy study routines and streaks",
-                "Emotional motivation when burnout hits",
-              ]}
-            />
-
-            <AudienceCard
-              title="For Lecturers"
-              points={[
-                "Manage multiple classes effortlessly",
-                "Automated reminders & summaries",
-                "Less micromanagement, better engagement",
-                "Clear overview of student activity",
-              ]}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <StepCard step="1" title="Add your academics">
+              Courses, assignments, classes, routines — everything in one place.
+            </StepCard>
+            <StepCard step="2" title="Mochi tracks for you">
+              Deadlines, streaks, missed tasks, progress — automatically.
+            </StepCard>
+            <StepCard step="3" title="Get human reminders">
+              Gentle nudges, emotional feedback, and celebration when you win.
+            </StepCard>
           </div>
         </div>
       </section>
 
       {/* ───────── FEATURES ───────── */}
-      <section className="py-20">
+      <section className="py-20 bg-gradient-to-b from-orange-100/50 to-transparent">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center text-orange-700 dark:text-orange-400 mb-14">
-            Why students love MochiDo
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-14">
+            Why MochiDo feels different
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <FeatureCard
-              title="Smart Tracking"
-              description="Courses, assignments, deadlines, routines — all in one intelligent dashboard that actually helps you stay consistent."
+              title="Emotion-aware reminders"
+              description="Mochi responds to your behavior — not just your schedule."
               img={mochistudy}
             />
             <FeatureCard
-              title="Emotional Feedback"
-              description="Mochi reacts to your progress. Celebrate wins, feel supported during slumps, and stay encouraged."
+              title="Designed for burnout"
+              description="Built for real students, real pressure, real life."
               img={mochihappy}
             />
             <FeatureCard
-              title="Automatic Reminders"
-              description="Daily, weekly, and deadline-based reminders that adapt to your schedule and workload."
+              title="Lecturer-friendly"
+              description="Less chasing, more clarity, better class flow."
               img={mochihappy}
             />
           </div>
         </div>
       </section>
 
-      {/* ───────── CTA ───────── */}
-      <section className="py-24 bg-gradient-to-r from-orange-100 to-orange-200 dark:from-gray-800 dark:to-gray-700">
+      {/* ───────── FINAL CTA ───────── */}
+      <section className="py-24">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="max-w-4xl mx-auto text-center px-6 space-y-6"
+          className="max-w-4xl mx-auto px-6 text-center space-y-6"
         >
-          <h2 className="text-4xl md:text-5xl font-extrabold text-orange-700 dark:text-orange-300">
-            Turn stress into structure 📚
+          <h2 className="text-4xl font-extrabold">
+            Your academics don’t have to hurt.
           </h2>
-          <p className="text-lg text-gray-700 dark:text-gray-300">
-            MochiDo helps you stay organized, motivated, and emotionally supported
-            throughout your academic journey.
+          <p className="text-gray-700 dark:text-gray-300">
+            Let Mochi help you stay consistent, calm, and in control.
           </p>
-          <Link
-            href="/signup"
-            className="inline-block px-10 py-5 bg-green-600 text-white font-bold rounded-2xl shadow-xl hover:scale-105 hover:bg-green-700 transition"
-          >
-            Join MochiDo Today
-          </Link>
+          <GlowButton href="/signup" label="Start with Mochi 🐹" />
         </motion.div>
       </section>
     </div>
@@ -166,56 +154,51 @@ export default function Home() {
 
 /* ───────── COMPONENTS ───────── */
 
-function FeatureCard({
-  title,
-  description,
-  img,
-}: {
-  title: string;
-  description: string;
-  img: any;
-}) {
+function GlowButton({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="relative inline-flex items-center justify-center px-8 py-4 font-semibold text-white rounded-xl bg-green-600 hover:bg-green-700 transition shadow-lg"
+    >
+      <span className="absolute inset-0 blur-xl bg-green-500/40 rounded-xl" />
+      <span className="relative">{label}</span>
+    </Link>
+  );
+}
+
+function FeatureCard({ title, description, img }: any) {
   return (
     <motion.div
-      whileHover={{ y: -8 }}
-      className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center space-y-4"
+      whileHover={{ y: -6 }}
+      className="relative bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-xl border border-orange-400/20 hover:shadow-orange-400/40 transition"
     >
-      <div className="relative w-28 h-28 mx-auto">
-        <Image src={img} alt={title} fill className="object-contain" />
+      <div className="absolute inset-0 rounded-2xl bg-orange-400/10 blur-2xl opacity-0 hover:opacity-100 transition" />
+      <div className="relative z-10 space-y-4">
+        <div className="w-20 h-20 relative">
+          <Image src={img} alt={title} fill className="object-contain" />
+        </div>
+        <h3 className="text-xl font-semibold text-orange-600">{title}</h3>
+        <p className="text-gray-700 dark:text-gray-300">{description}</p>
       </div>
-      <h3 className="text-xl font-semibold text-orange-700 dark:text-orange-300">
-        {title}
-      </h3>
-      <p className="text-gray-700 dark:text-gray-300">
-        {description}
-      </p>
     </motion.div>
   );
 }
 
-function AudienceCard({
-  title,
-  points,
-}: {
-  title: string;
-  points: string[];
-}) {
+function StepCard({ step, title, children }: any) {
   return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
-    >
-      <h3 className="text-2xl font-bold text-orange-600 dark:text-orange-300 mb-4">
-        {title}
-      </h3>
-      <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-        {points.map((point, i) => (
-          <li key={i} className="flex items-start gap-2">
-            <span className="text-green-500 font-bold">✓</span>
-            {point}
-          </li>
-        ))}
-      </ul>
-    </motion.div>
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center">
+      <div className="text-4xl font-extrabold text-orange-500 mb-3">{step}</div>
+      <h4 className="text-xl font-semibold mb-2">{title}</h4>
+      <p className="text-gray-700 dark:text-gray-300">{children}</p>
+    </div>
+  );
+}
+
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div className="text-3xl font-extrabold text-orange-600">{value}</div>
+      <div className="text-sm text-gray-600 dark:text-gray-400">{label}</div>
+    </div>
   );
 }
