@@ -1,14 +1,26 @@
 // src/app/login/page.tsx
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
 export default function Login() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
+
+  // After successful login → check role and redirect accordingly
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      if (session.user.role) {
+        router.replace(`/dashboard/${session.user.role}`);
+      } else {
+        router.replace("/role-select");
+      }
+    }
+  }, [status, session, router]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,8 +41,12 @@ export default function Login() {
       setLoading(false);
     } else {
       toast.success("Logged in!");
-      router.replace("/role-select");
+      // Do NOT router.replace here — let the useEffect handle it
+      // It will wait for session to update and decide where to go
     }
+  }
+  if (status === "loading") {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
   return (
