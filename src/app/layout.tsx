@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className="bg-white dark:bg-gray-900 transition-colors duration-300">
         {/* Wrap children in client component for SessionProvider / Toaster */}
           <DarkModeToggle />
 
