@@ -13,11 +13,11 @@ const fadeUp = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 via-orange-100 to-orange-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-gray-800 dark:text-gray-100 overflow-x-hidden">
+    <div className="min-h-screen text-gray-800 dark:text-gray-100 overflow-x-hidden">
 
       {/* ───────── HERO ───────── */}
       <section className="relative max-w-7xl mx-auto px-5 pt-16 pb-20 md:pt-24 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
-        
+
         {/* Glow blob */}
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-400/20 blur-3xl rounded-full" />
 
@@ -29,9 +29,9 @@ export default function Home() {
           className="space-y-6 z-10"
         >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
-            Stay consistent.  
+            Stay consistent.
             <br />
-            Stay motivated.  
+            Stay motivated.
             <br />
             <span className="text-orange-600 dark:text-orange-400">
               Mochi watches your back 🐹
