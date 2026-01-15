@@ -1,17 +1,16 @@
 // src/app/role-select/page.tsx
 "use client";
 
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function RoleSelect() {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // Redirect if already has role (safety net)
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role) {
       router.replace(`/dashboard/${session.user.role}`);
@@ -23,21 +22,30 @@ export default function RoleSelect() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/set-role", {
+      const res = await fetch("/api/set-role", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role }),
       });
 
-      if (!response.ok) {
-        const err = await response.json();
+      if (!res.ok) {
+        const err = await res.json();
         throw new Error(err.error || "Failed to set role");
       }
 
-      // Update session so we get the new role immediately
-      await update({ user: { role } });
+      toast.success(`Role set to ${role}! Welcome 🐹`);
 
-      toast.success(`Role set to ${role}! Welcome to MochiDo 🐹`);
+      // Force fresh session → middleware will see the role
+      await signOut({ redirect: false });
+      await signIn("credentials", {
+        redirect: false,
+        // You can skip email/password here if you want silent re-auth,
+        // but safest is to re-use credentials or just let user re-login once
+        // Alternative → router.replace(`/dashboard/${role}`) but may still loop
+      });
+
+      // After signIn returns → router will usually handle redirect via middleware
+      // or force it:
       router.replace(`/dashboard/${role}`);
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
