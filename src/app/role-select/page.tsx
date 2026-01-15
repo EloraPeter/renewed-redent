@@ -19,35 +19,45 @@ const { data: session, status, update } = useSession();
     }
   }, [status, session?.user?.role, router]);
   
-  const handleSelectRole = async (role: "student" | "lecturer") => {
+ const handleSelectRole = async (role: "student" | "lecturer") => {
     if (loading) return;
+    if (session?.user?.role) {
+      // Already has role — shouldn't be here, but safety net
+      toast("Role already set!");
+      router.replace(`/dashboard/${session.user.role}`);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await fetch("/api/set-role", {
+      const response = await fetch("/api/set-role", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role }),
       });
 
-      if (!res.ok) {
-        const err = await res.json();
+      if (!response.ok) {
+        const err = await response.json();
+        if (err.error?.includes("already set")) {
+          // Role was set elsewhere (race condition) → refresh session & redirect
+          await update();
+          const freshSession = await fetch("/api/auth/session").then(r => r.json());
+          if (freshSession?.user?.role) {
+            router.replace(`/dashboard/${freshSession.user.role}`);
+            return;
+          }
+        }
         throw new Error(err.error || "Failed to set role");
       }
 
-      toast.success(`Role set to ${role}! Welcome 🐹`);
+      // Optional: force re-login to guarantee fresh JWT in cookie (most reliable)
+      // await signOut({ redirect: false });
+      // await signIn(undefined, { redirect: false });
 
-      // Force fresh session → middleware will see the role
-      await signOut({ redirect: false });
-      await signIn("credentials", {
-        redirect: false,
-        // You can skip email/password here if you want silent re-auth,
-        // but safest is to re-use credentials or just let user re-login once
-        // Alternative → router.replace(`/dashboard/${role}`) but may still loop
-      });
+      await update(); // Try to refresh client session
 
-      // After signIn returns → router will usually handle redirect via middleware
-      // or force it:
+      toast.success(`Role set to ${role}! Welcome to MochiDo 🐹`);
       router.replace(`/dashboard/${role}`);
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
