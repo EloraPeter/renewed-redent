@@ -7,16 +7,18 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function RoleSelect() {
-  const { data: session, status } = useSession();
+const { data: session, status, update } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.role) {
-      router.replace(`/dashboard/${session.user.role}`);
+    if (status === "authenticated") {
+      if (session?.user?.role) {
+        router.replace(`/dashboard/${session.user.role}`);
+      }
     }
   }, [status, session?.user?.role, router]);
-
+  
   const handleSelectRole = async (role: "student" | "lecturer") => {
     if (loading) return;
     setLoading(true);
