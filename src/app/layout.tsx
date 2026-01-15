@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import DarkModeToggle from "@/components/DarkModeToggle";
+import { Toaster } from "react-hot-toast";
 import ClientProviders from './ClientProviders'; // Client-only wrapper for React Context
 
 export const metadata: Metadata = {
@@ -15,14 +16,40 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning className="bg-white dark:bg-gray-900 transition-colors duration-300">
-        {/* Wrap children in client component for SessionProvider / Toaster */}
-          <DarkModeToggle />
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* 🔥 PREVENT DARK MODE FLASH */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  const theme = localStorage.getItem("theme");
+                  if (
+                    theme === "dark" ||
+                    (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
+                  ) {
+                    document.documentElement.classList.add("dark");
+                  }
+                } catch (_) {}
+              })();
+            `,
+          }}
+        />
+      </head>
 
-        <ClientProviders>{children}</ClientProviders>
+      <body className="bg-white dark:bg-gray-900 transition-colors duration-300">
+        <ClientProviders>
+          <DarkModeToggle />
+          {children}
+          <Toaster position="top-right" />
+        </ClientProviders>
       </body>
     </html>
   );
