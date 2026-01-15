@@ -7,58 +7,56 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function RoleSelect() {
-const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      if (session?.user?.role) {
-        router.replace(`/dashboard/${session.user.role}`);
+    if (status === "authenticated" && session?.user?.role) {
+      const target = `/dashboard/${session.user.role}`;
+      if (window.location.pathname !== target) {
+        router.replace(target);
       }
     }
   }, [status, session?.user?.role, router]);
-  
- const handleSelectRole = async (role: "student" | "lecturer") => {
-    if (loading) return;
-    if (session?.user?.role) {
-      // Already has role — shouldn't be here, but safety net
-      toast("Role already set!");
-      router.replace(`/dashboard/${session.user.role}`);
-      return;
-    }
 
+  const handleSelectRole = async (selectedRole: "student" | "lecturer") => {
+    if (loading) return;
     setLoading(true);
 
     try {
-      const response = await fetch("/api/set-role", {
+      // 1. Set role in DB
+      const res = await fetch("/api/set-role", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role }),
+        body: JSON.stringify({ role: selectedRole }),
       });
 
-      if (!response.ok) {
-        const err = await response.json();
-        if (err.error?.includes("already set")) {
-          // Role was set elsewhere (race condition) → refresh session & redirect
-          await update();
-          const freshSession = await fetch("/api/auth/session").then(r => r.json());
-          if (freshSession?.user?.role) {
-            router.replace(`/dashboard/${freshSession.user.role}`);
-            return;
-          }
-        }
+      if (!res.ok) {
+        const err = await res.json();
         throw new Error(err.error || "Failed to set role");
       }
 
-      // Optional: force re-login to guarantee fresh JWT in cookie (most reliable)
-      // await signOut({ redirect: false });
-      // await signIn(undefined, { redirect: false });
+      toast.success(`Role set to ${selectedRole}! Welcome to MochiDo 🐹`);
 
-      await update(); // Try to refresh client session
+      // 2. Force full session refresh by signing out & in again
+      // This updates the JWT cookie → middleware will see correct role
+      await signOut({ redirect: false });
 
-      toast.success(`Role set to ${role}! Welcome to MochiDo 🐹`);
-      router.replace(`/dashboard/${role}`);
+      // Re-authenticate silently (credentials provider allows it if you pass nothing)
+      // If your credentials flow requires email/password every time → user has to login again once
+      const reSignIn = await signIn("credentials", {
+        redirect: false,
+        // email: "...", password: "..."   ← if you stored them temporarily you could pass, but usually not
+      });
+
+      if (reSignIn?.error) {
+        console.error("Re-signin failed", reSignIn.error);
+        // fallback: just force navigation and let middleware handle
+      }
+
+      // 3. Navigate — middleware should now redirect correctly if needed
+      router.replace(`/dashboard/${selectedRole}`);
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
       console.error(err);
