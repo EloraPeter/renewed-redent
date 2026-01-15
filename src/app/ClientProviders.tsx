@@ -8,7 +8,17 @@ export default function ClientProviders({ children }: { children: React.ReactNod
   return (
     <SessionProvider>
       {children}
-      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
-    </SessionProvider>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "var(--toast-bg)",
+            color: "var(--toast-text)",
+            borderRadius: "12px",
+            border: "1px solid var(--toast-border)",
+          },
+        }}
+      />    </SessionProvider>
   );
 }
