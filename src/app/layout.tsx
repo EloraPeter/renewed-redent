@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import DarkModeToggle from "@/components/DarkModeToggle";
 import ClientProviders from './ClientProviders'; // Client-only wrapper for React Context
 
 export const metadata: Metadata = {
@@ -19,6 +20,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body suppressHydrationWarning>
         {/* Wrap children in client component for SessionProvider / Toaster */}
+          <DarkModeToggle />
+
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
