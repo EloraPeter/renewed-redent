@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'MochiDo – Productivity with Mochi',
   description: 'Student & lecturer companion with emotional hamster mascot',
   manifest: '/manifest.json',
-  themeColor: '#f97316',
+  // themeColor: '#f97316',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
