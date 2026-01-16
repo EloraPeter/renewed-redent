@@ -41,12 +41,17 @@ export async function middleware(request: NextRequest) {
 
   // No role yet → force role-select
   if (!role) {
-    if (pathname !== "/role-select") {
-      console.log("[Middleware] No role → redirect to /role-select");
-      return NextResponse.redirect(new URL("/role-select", request.url));
-    }
-    return NextResponse.next();
+  // Allow role-select AND dashboard pages temporarily
+  if (
+    pathname !== "/role-select" &&
+    !pathname.startsWith("/dashboard")
+  ) {
+    return NextResponse.redirect(new URL("/role-select", request.url));
   }
+
+  return NextResponse.next();
+}
+
 
   const expectedDashboard = `/dashboard/${role}`;
 
@@ -57,9 +62,9 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect root/login/signup to dashboard
-  if (pathname === "/" || pathname === "/login" || pathname === "/signup") {
-    return NextResponse.redirect(new URL(expectedDashboard, request.url));
-  }
+  // if (pathname === "/" || pathname === "/login" || pathname === "/signup") {
+  //   return NextResponse.redirect(new URL(expectedDashboard, request.url));
+  // }
 
   // === FIX: Allow shared dashboard pages like /dashboard/settings ===
   if (pathname.startsWith("/dashboard/settings")) {
