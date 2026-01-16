@@ -2,14 +2,15 @@
 "use client";
 
 import { signIn, signOut, useSession } from "next-auth/react";
+import type { Session } from "next-auth";   // ← import this
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function RoleSelect() {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { data: session, status, update } = useSession();
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role) {
@@ -20,54 +21,43 @@ export default function RoleSelect() {
     }
   }, [status, session?.user?.role, router]);
 
-  // src/app/role-select/page.tsx — inside handleSelectRole
 
 const handleSelectRole = async (selectedRole: "student" | "lecturer") => {
-  if (loading) return;
-  setLoading(true);
+    if (loading) return;
+    setLoading(true);
 
-  try {
-    const res = await fetch("/api/set-role", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role: selectedRole }),
-    });
+    try {
+      const res = await fetch("/api/set-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: selectedRole }),
+      });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Failed to set role");
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to set role");
+      }
+
+      toast.success(`Role set to ${selectedRole}! Welcome to MochiDo 🐹`);
+
+      // ───────────────────────────────────────────────────────────────
+      //   This is the key part — update the session/JWT
+      // ───────────────────────────────────────────────────────────────
+      await update({
+        user: {
+          role: selectedRole,
+        },
+      });
+
+      // Now the token has the new role → middleware will allow dashboard
+      router.replace(`/dashboard/${selectedRole}`);
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-
-    toast.success(`Role set to ${selectedRole}! Welcome to MochiDo 🐹`);
-
-    // ────────────────────────────────────────────────
-    //   Update local session immediately (no signOut/signIn)
-    // ────────────────────────────────────────────────
-    // This triggers useSession to re-fetch → sees new role from JWT
-    await signIn("credentials", {
-      redirect: false,
-      // dummy call just to force session refresh — but better alternatives exist
-      // OR even better — use update() from next-auth/react
-    });
-
-    // Preferred way in next-auth v5 / auth.js
-    const { update } = useSession();   // ← make sure to destructure update too
-
-    await update({
-      user: {
-        role: selectedRole,
-      },
-    });
-
-    // Now navigate
-    router.replace(`/dashboard/${selectedRole}`);
-  } catch (err: any) {
-    toast.error(err.message || "Something went wrong");
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   if (status === "loading") {
     return (
