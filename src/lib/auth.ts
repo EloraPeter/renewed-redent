@@ -50,7 +50,8 @@ export const authOptions: NextAuthOptions = {
       // Initial sign-in (user object is present)
       if (user) {
         token.id = user.id;
-        token.role = user.role;           // may be null at first sign-in
+        token.role = user.role ?? null;
+        // may be null at first sign-in
       }
 
       // ───────────────────────────────────────────────
@@ -65,22 +66,24 @@ export const authOptions: NextAuthOptions = {
 
       // Always try to refresh role from DB (your existing logic - good!)
       // This acts as a safety net on every session access
-      if (token.id) {
-        try {
-          const { rows } = await pool.query("SELECT role FROM profiles WHERE id = $1", [token.id]);
-          const dbRole = rows[0]?.role ?? null;
-          console.log("[JWT callback] DB role fetch:", dbRole);
-          token.role = dbRole;  // if you want DB to always win, keep this last
-        } catch (err) {
-          console.error("Failed to refresh role:", err);
-        }
-      }
+      // if (token.id) {
+      //   try {
+      //     const { rows } = await pool.query("SELECT role FROM profiles WHERE id = $1", [token.id]);
+      //     const dbRole = rows[0]?.role ?? null;
+      //     console.log("[JWT callback] DB role fetch:", dbRole);
+      //     token.role = dbRole;  // if you want DB to always win, keep this last
+      //   } catch (err) {
+      //     console.error("Failed to refresh role:", err);
+      //   }
+      // }
       return token;
     },
 
     async session({ session, token }) {
-      if (token?.id) session.user.id = token.id;
-      if (token?.role) session.user.role = token.role as "student" | "lecturer" | null;
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as "student" | "lecturer" | null;
+      }
       return session;
     },
   },
