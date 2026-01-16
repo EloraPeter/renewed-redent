@@ -46,12 +46,24 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // Initial sign-in (user object is present)
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = user.role;           // may be null at first sign-in
       }
 
+      // ───────────────────────────────────────────────
+      // Client calls update() → this block runs
+      // ───────────────────────────────────────────────
+      if (trigger === "update" && session?.user?.role) {
+        token.role = session.user.role;   // take whatever client sent
+        // Optional: you could also re-check DB here if you want extra safety
+        // but usually unnecessary since /api/set-role already validated + updated
+      }
+
+      // Always try to refresh role from DB (your existing logic - good!)
+      // This acts as a safety net on every session access
       if (token.id) {
         try {
           const { rows } = await pool.query(
@@ -69,7 +81,7 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (token?.id) session.user.id = token.id;
-      session.user.role = token.role ?? null;
+      if (token?.role) session.user.role = token.role as "student" | "lecturer" | null;
       return session;
     },
   },
