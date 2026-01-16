@@ -22,14 +22,22 @@ export type AssignmentItem = {
 export async function getStudentData(userId: string) {
   const today = new Date().toISOString().split("T")[0];
 
-  // Wake-up time from settings
+  // Try to get wake-up time from routines
   const wakeUpRes = await pool.query(
-    `SELECT wake_up_time FROM user_settings WHERE user_id = $1`,
+    `SELECT schedule->>'time' AS wake_up_time
+     FROM routines
+     WHERE user_id = $1
+       AND title ILIKE 'wake up'`,
     [userId]
   );
   const wakeUpTime = wakeUpRes.rows[0]?.wake_up_time ?? null;
 
   // Today's classes
+  // Note: your current query uses 'classes' table and 'enrollments' table,
+  // but these tables don't exist in the schema you shared.
+  // For now we'll comment it out and return empty array.
+  // You may need to adjust this part later.
+  /*
   const classesRes = await pool.query(
     `SELECT name, start_time
      FROM classes c
@@ -39,25 +47,27 @@ export async function getStudentData(userId: string) {
      ORDER BY start_time`,
     [userId]
   );
+  const todayClasses = classesRes.rows as ClassItem[];
+  */
+  const todayClasses: ClassItem[] = []; // temporary
 
-  // Upcoming assignments (next 7 days)
+  // Upcoming assignments (this should work with your current schema)
   const assignmentsRes = await pool.query(
-    `SELECT title, due_date
+    `SELECT a.title, a.due_date::text AS due_date
      FROM assignments a
-     JOIN courses c ON a.course_id = c.id
-     JOIN enrollments e ON c.id = e.class_id
-     WHERE e.user_id = $1
+     WHERE a.user_id = $1
        AND a.due_date >= CURRENT_DATE
        AND a.due_date <= CURRENT_DATE + INTERVAL '7 days'
-     ORDER BY due_date ASC
+     ORDER BY a.due_date ASC
      LIMIT 5`,
     [userId]
   );
+  const upcomingAssignments = assignmentsRes.rows as AssignmentItem[];
 
   return {
     wakeUpTime,
-    todayClasses: classesRes.rows as ClassItem[],
-    upcomingAssignments: assignmentsRes.rows as AssignmentItem[],
+    todayClasses,
+    upcomingAssignments,
   };
 }
 
