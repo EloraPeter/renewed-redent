@@ -67,16 +67,14 @@ export const authOptions: NextAuthOptions = {
       // This acts as a safety net on every session access
       if (token.id) {
         try {
-          const { rows } = await pool.query(
-            "SELECT role FROM profiles WHERE id = $1",
-            [token.id]
-          );
-          token.role = rows[0]?.role ?? null;
+          const { rows } = await pool.query("SELECT role FROM profiles WHERE id = $1", [token.id]);
+          const dbRole = rows[0]?.role ?? null;
+          console.log("[JWT callback] DB role fetch:", dbRole);
+          token.role = dbRole;  // if you want DB to always win, keep this last
         } catch (err) {
-          console.error("Failed to refresh role in jwt callback:", err);
+          console.error("Failed to refresh role:", err);
         }
       }
-
       return token;
     },
 
