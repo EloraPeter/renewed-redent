@@ -77,14 +77,14 @@ export async function getStudentData(userId: string) {
 export async function getLecturerData(userId: string) {
   const today = new Date().toISOString().split("T")[0];
 
-  // Today's classes (as lecturer → teaching)
+  // Today's classes – using courses where user is the owner/lecturer
   const classesRes = await pool.query(
-    `SELECT name, start_time
-   FROM courses
-   WHERE user_id = $1
-     AND LOWER(day) = LOWER(to_char(CURRENT_DATE, 'Day'))  -- e.g. 'monday', 'tuesday'
-     AND day IS NOT NULL
-   ORDER BY start_time`,
+    `SELECT name, start_time::text AS start_time
+     FROM courses
+     WHERE user_id = $1
+       AND LOWER(TRIM(day)) = LOWER(TRIM(to_char(CURRENT_DATE, 'Day')))
+     ORDER BY start_time
+     LIMIT 10`,
     [userId]
   );
   const todayClasses = classesRes.rows as ClassItem[];
