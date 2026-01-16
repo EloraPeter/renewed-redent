@@ -10,7 +10,6 @@ import { getStudentData } from "@/lib/data";
 export default async function StudentDashboard() {
   const session = await getServerSession();
   if (!session?.user) redirect("/login");
-  // if (session.user.role !== "student") redirect("/dashboard/lecturer");
 
   const userId = session.user.id; // ← make sure this exists (uuid/string)
   const userName = session.user.name || session.user.email?.split("@")[0] || "Student";
