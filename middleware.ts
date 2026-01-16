@@ -29,6 +29,7 @@ export async function middleware(request: NextRequest) {
   // No session → redirect to login
   if (!token) {
     if (!pathname.startsWith("/login") && !pathname.startsWith("/signup")) {
+      console.log("[Middleware] No token → redirect to login");
       const url = new URL("/login", request.url);
       url.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(url);
@@ -41,6 +42,7 @@ export async function middleware(request: NextRequest) {
   // No role yet → force role-select
   if (!role) {
     if (pathname !== "/role-select") {
+      console.log("[Middleware] No role → redirect to /role-select");
       return NextResponse.redirect(new URL("/role-select", request.url));
     }
     return NextResponse.next();
@@ -50,6 +52,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect from role-select if role exists
   if (pathname === "/role-select") {
+    console.log(`[Middleware] Has role ${role} → redirect from role-select to ${expectedDashboard}`);
     return NextResponse.redirect(new URL(expectedDashboard, request.url));
   }
 
