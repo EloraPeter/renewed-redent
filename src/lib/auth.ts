@@ -57,6 +57,7 @@ export const authOptions: NextAuthOptions = {
       // Client calls update() → this block runs
       // ───────────────────────────────────────────────
       if (trigger === "update" && session?.user?.role) {
+        console.log("[JWT callback] trigger=update → setting role to", session.user.role);
         token.role = session.user.role;   // take whatever client sent
         // Optional: you could also re-check DB here if you want extra safety
         // but usually unnecessary since /api/set-role already validated + updated
