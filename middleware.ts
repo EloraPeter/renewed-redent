@@ -39,44 +39,34 @@ export async function middleware(request: NextRequest) {
 
   const role = token.role as "student" | "lecturer" | null;
 
-  // No role yet → force role-select
+  // No role → ONLY role-select allowed
+  if (!role && pathname !== "/role-select") {
+    return NextResponse.redirect(new URL("/role-select", request.url));
+  }
+
   if (!role) {
-    // Allow role-select AND dashboard pages temporarily
-    if (!role && pathname !== "/role-select") {
-      return NextResponse.redirect(new URL("/role-select", request.url));
-    }
-
-
     return NextResponse.next();
   }
 
-
   const expectedDashboard = `/dashboard/${role}`;
 
-  // Redirect from role-select if role exists
+  // Block role-select once role exists
   if (pathname === "/role-select") {
-    console.log(`[Middleware] Has role ${role} → redirect from role-select to ${expectedDashboard}`);
     return NextResponse.redirect(new URL(expectedDashboard, request.url));
   }
 
-  // Redirect root/login/signup to dashboard
-  // if (pathname === "/" || pathname === "/login" || pathname === "/signup") {
-  //   return NextResponse.redirect(new URL(expectedDashboard, request.url));
-  // }
-
-  // === FIX: Allow shared dashboard pages like /dashboard/settings ===
+  // Allow shared dashboard pages
   if (pathname.startsWith("/dashboard/settings")) {
-    return NextResponse.next(); // Explicitly allow settings
+    return NextResponse.next();
   }
 
-  // Correct wrong role-based dashboard (e.g. student trying /dashboard/lecturer)
-  if (pathname.startsWith("/dashboard")) {
-    if (!pathname.startsWith(expectedDashboard) && !pathname.startsWith("/dashboard/settings")) {
-      return NextResponse.redirect(new URL(expectedDashboard, request.url));
-    }
+  // Prevent cross-role access
+  if (pathname.startsWith("/dashboard") && !pathname.startsWith(expectedDashboard)) {
+    return NextResponse.redirect(new URL(expectedDashboard, request.url));
   }
 
   return NextResponse.next();
+
 }
 
 export const config = {
