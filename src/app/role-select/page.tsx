@@ -15,14 +15,14 @@ export default function RoleSelect() {
     status: "authenticated" | "loading" | "unauthenticated";
     update: (data?: any) => Promise<Session | null>;
   };
-  useEffect(() => {
-    if (status === "authenticated" && session?.user?.role) {
-      const target = `/dashboard/${session.user.role}`;
-      if (window.location.pathname !== target) {
-        router.replace(target);
-      }
-    }
-  }, [status, session?.user?.role, router]);
+  // useEffect(() => {
+  //   if (status === "authenticated" && session?.user?.role) {
+  //     const target = `/dashboard/${session.user.role}`;
+  //     if (window.location.pathname !== target) {
+  //       router.replace(target);
+  //     }
+  //   }
+  // }, [status, session?.user?.role, router]);
 
 
   const handleSelectRole = async (selectedRole: "student" | "lecturer") => {
