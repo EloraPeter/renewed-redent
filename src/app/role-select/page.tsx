@@ -20,50 +20,54 @@ export default function RoleSelect() {
     }
   }, [status, session?.user?.role, router]);
 
-  const handleSelectRole = async (selectedRole: "student" | "lecturer") => {
-    if (loading) return;
-    setLoading(true);
+  // src/app/role-select/page.tsx — inside handleSelectRole
 
-    try {
-      // 1. Set role in DB
-      const res = await fetch("/api/set-role", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: selectedRole }),
-      });
+const handleSelectRole = async (selectedRole: "student" | "lecturer") => {
+  if (loading) return;
+  setLoading(true);
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to set role");
-      }
+  try {
+    const res = await fetch("/api/set-role", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: selectedRole }),
+    });
 
-      toast.success(`Role set to ${selectedRole}! Welcome to MochiDo 🐹`);
-
-      // 2. Force full session refresh by signing out & in again
-      // This updates the JWT cookie → middleware will see correct role
-      await signOut({ redirect: false });
-
-      // Re-authenticate silently (credentials provider allows it if you pass nothing)
-      // If your credentials flow requires email/password every time → user has to login again once
-      const reSignIn = await signIn("credentials", {
-        redirect: false,
-        // email: "...", password: "..."   ← if you stored them temporarily you could pass, but usually not
-      });
-
-      if (reSignIn?.error) {
-        console.error("Re-signin failed", reSignIn.error);
-        // fallback: just force navigation and let middleware handle
-      }
-
-      // 3. Navigate — middleware should now redirect correctly if needed
-      router.replace(`/dashboard/${selectedRole}`);
-    } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
-      console.error(err);
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Failed to set role");
     }
-  };
+
+    toast.success(`Role set to ${selectedRole}! Welcome to MochiDo 🐹`);
+
+    // ────────────────────────────────────────────────
+    //   Update local session immediately (no signOut/signIn)
+    // ────────────────────────────────────────────────
+    // This triggers useSession to re-fetch → sees new role from JWT
+    await signIn("credentials", {
+      redirect: false,
+      // dummy call just to force session refresh — but better alternatives exist
+      // OR even better — use update() from next-auth/react
+    });
+
+    // Preferred way in next-auth v5 / auth.js
+    const { update } = useSession();   // ← make sure to destructure update too
+
+    await update({
+      user: {
+        role: selectedRole,
+      },
+    });
+
+    // Now navigate
+    router.replace(`/dashboard/${selectedRole}`);
+  } catch (err: any) {
+    toast.error(err.message || "Something went wrong");
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (status === "loading") {
     return (
