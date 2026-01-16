@@ -80,10 +80,11 @@ export async function getLecturerData(userId: string) {
   // Today's classes (as lecturer → teaching)
   const classesRes = await pool.query(
     `SELECT name, start_time
-     FROM classes c
-     WHERE c.lecturer_id = $1
-       AND c.day_of_week = EXTRACT(DOW FROM CURRENT_DATE)
-     ORDER BY start_time`,
+   FROM courses
+   WHERE user_id = $1
+     AND LOWER(day) = LOWER(to_char(CURRENT_DATE, 'Day'))  -- e.g. 'monday', 'tuesday'
+     AND day IS NOT NULL
+   ORDER BY start_time`,
     [userId]
   );
   const todayClasses = classesRes.rows as ClassItem[];
