@@ -10,8 +10,11 @@ import toast from "react-hot-toast";
 export default function RoleSelect() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { data: session, status, update } = useSession();
-
+  const { data: session, status, update } = useSession() as {
+    data: Session | null;
+    status: "authenticated" | "loading" | "unauthenticated";
+    update: (data?: any) => Promise<Session | null>;
+  };
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role) {
       const target = `/dashboard/${session.user.role}`;
@@ -22,7 +25,7 @@ export default function RoleSelect() {
   }, [status, session?.user?.role, router]);
 
 
-const handleSelectRole = async (selectedRole: "student" | "lecturer") => {
+  const handleSelectRole = async (selectedRole: "student" | "lecturer") => {
     if (loading) return;
     setLoading(true);
 
