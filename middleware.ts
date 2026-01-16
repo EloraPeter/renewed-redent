@@ -42,12 +42,10 @@ export async function middleware(request: NextRequest) {
   // No role yet → force role-select
   if (!role) {
     // Allow role-select AND dashboard pages temporarily
-    if (
-      pathname !== "/role-select" &&
-      !pathname.startsWith("/dashboard")
-    ) {
+    if (!role && pathname !== "/role-select") {
       return NextResponse.redirect(new URL("/role-select", request.url));
     }
+
 
     return NextResponse.next();
   }
