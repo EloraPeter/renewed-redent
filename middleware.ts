@@ -7,6 +7,8 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = request.nextUrl;
 
+  console.log(`[Middleware] ${request.method} ${pathname} | token.id=${token?.id ?? 'none'} | role=${token?.role ?? 'null'}`);
+
   // Allow static assets and API routes
   if (
     pathname.startsWith("/_next") ||
