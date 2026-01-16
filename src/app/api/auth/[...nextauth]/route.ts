@@ -59,14 +59,20 @@ const handler = NextAuth({
   },
 
   callbacks: {
-    async jwt({ token, user }) {
-      // user is only available on initial sign in
+    async jwt({ token, user, trigger, session }) {
+      // Initial login
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.role = user.role;
+        token.role = user.role ?? null;
       }
+
+      // Client-side update() after role selection
+      if (trigger === "update" && session?.user?.role) {
+        token.role = session.user.role;
+      }
+
       return token;
     },
 
