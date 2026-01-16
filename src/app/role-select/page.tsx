@@ -52,6 +52,8 @@ export default function RoleSelect() {
         },
       });
 
+      await new Promise(r => setTimeout(r, 300));
+
       // Now the token has the new role → middleware will allow dashboard
       router.replace(`/dashboard/${selectedRole}`);
     } catch (err: any) {
