@@ -10,7 +10,7 @@ import { getLecturerData } from "@/lib/data"; // ← you'll need to create/adapt
 export default async function LecturerDashboard() {
     const session = await getServerSession();
     if (!session?.user) redirect("/login");
-    if (session.user.role !== "lecturer") redirect("/dashboard/student");
+    // if (session.user.role !== "lecturer") redirect("/dashboard/student");
 
     const userId = session.user.id; // assuming this exists (uuid/string)
     const userName =
