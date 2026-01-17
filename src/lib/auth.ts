@@ -1,9 +1,10 @@
 // src/lib/auth.ts
-import { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth, { NextAuthOptions, Session } from "next-auth";
+import { JWT } from "next-auth/jwt";import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import pool from "@/lib/db";
 
+// Define options with proper types
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -15,7 +16,6 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        // Get user from users table
         const { rows: userRows } = await pool.query(
           "SELECT id, name, email, password FROM users WHERE email = $1",
           [credentials.email]
@@ -26,7 +26,6 @@ export const authOptions: NextAuthOptions = {
         const passwordValid = await bcrypt.compare(credentials.password, user.password);
         if (!passwordValid) return null;
 
-        // Get role from profiles
         const { rows: profileRows } = await pool.query(
           "SELECT role FROM profiles WHERE id = $1",
           [user.id]
@@ -43,43 +42,36 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  session: { strategy: "jwt" },
+  session: { 
+    strategy: "jwt" as const,  // ← fixes the string vs SessionStrategy mismatch
+  },
 
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      // Initial sign-in (user object is present)
+    async jwt({ token, user, trigger, session }: { 
+      token: JWT; 
+      user?: any; 
+      trigger?: "signIn" | "signUp" | "update"; 
+      session?: Session 
+    }): Promise<JWT> {
+      // Initial sign-in
       if (user) {
         token.id = user.id;
         token.role = user.role ?? null;
-        // may be null at first sign-in
       }
 
-      // ───────────────────────────────────────────────
-      // Client calls update() → this block runs
-      // ───────────────────────────────────────────────
+      // Client calls session.update()
       if (trigger === "update" && session?.user?.role) {
         console.log("[JWT callback] trigger=update → setting role to", session.user.role);
-        token.role = session.user.role;   // take whatever client sent
-        // Optional: you could also re-check DB here if you want extra safety
-        // but usually unnecessary since /api/set-role already validated + updated
+        token.role = session.user.role;
       }
 
-      // Always try to refresh role from DB (your existing logic - good!)
-      // This acts as a safety net on every session access
-      // if (token.id) {
-      //   try {
-      //     const { rows } = await pool.query("SELECT role FROM profiles WHERE id = $1", [token.id]);
-      //     const dbRole = rows[0]?.role ?? null;
-      //     console.log("[JWT callback] DB role fetch:", dbRole);
-      //     token.role = dbRole;  // if you want DB to always win, keep this last
-      //   } catch (err) {
-      //     console.error("Failed to refresh role:", err);
-      //   }
-      // }
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ session, token }: { 
+      session: Session; 
+      token: JWT 
+    }): Promise<Session> {
       if (token) {
         session.user.id = token.id as string;
         session.user.role = token.role as "student" | "lecturer" | null;
@@ -91,3 +83,11 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   pages: { signIn: "/login" },
 };
+
+// Export the helpers
+export const { 
+  auth, 
+  handlers, 
+  signIn, 
+  signOut 
+} = NextAuth(authOptions);
