@@ -3,9 +3,11 @@
 import pool from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { authOptions } from "@/lib/auth";
+
 
 async function getUserId() {
-  const session = await getServerSession();
+const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error('Not authenticated');
   return session.user.id as string;
 }
