@@ -2,13 +2,18 @@
 'use server';
 
 import pool from '@/lib/db';
-import { auth } from '@/lib/auth';           // ← this now works
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";     // ← this now works
 import { revalidatePath } from 'next/cache';
 
 async function getUserId() {
-  const session = await auth();              // ← use auth() here
-  if (!session?.user?.id) throw new Error('Not authenticated');
-  return session.user.id as string;
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  return session.user.id;
 }
 
 export async function getUserRoutines() {
