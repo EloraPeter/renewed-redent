@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import NotificationScheduler from "@/components/NotificationScheduler";
 import { getLecturerData } from "@/lib/data";
+import { Menu } from 'lucide-react'; // hamburger icon
 import Sidebar from "@/components/Sidebar";
 
 
@@ -41,6 +42,9 @@ export default async function LecturerDashboard() {
                 <h1 className="text-2xl md:text-3xl font-bold">
                     Welcome back, {userName} 👨‍🏫
                 </h1>
+                <button id="menu-toggle" className="text-gray-900 dark:text-gray-100">
+            <Menu size={24} />
+          </button>
             </header>
 
             {/* Quick stats row */}

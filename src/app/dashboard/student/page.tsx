@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
+import { Menu } from 'lucide-react'; // hamburger icon
 import NotificationScheduler from "@/components/NotificationScheduler";
 
 import { getStudentData } from "@/lib/data";
@@ -33,7 +34,9 @@ export default async function StudentDashboard() {
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Welcome back, {userName} 🐹
           </h1>
-          
+          <button id="menu-toggle" className="text-gray-900 dark:text-gray-100">
+            <Menu size={24} />
+          </button>
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">
