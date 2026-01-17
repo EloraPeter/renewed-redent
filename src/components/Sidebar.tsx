@@ -44,7 +44,12 @@ export default function Sidebar({ navItems, role }: SidebarProps) {
       document.getElementById("overlay")?.classList.add("hidden");
     };
 
-    toggleBtn.addEventListener("click", openSidebar);
+    const handleToggleClick = (e: MouseEvent) => {
+      e.stopPropagation();
+      openSidebar();
+    };
+
+    toggleBtn.addEventListener("click", handleToggleClick);
 
     // Close on outside click
     const handleOutsideClick = (e: MouseEvent) => {
