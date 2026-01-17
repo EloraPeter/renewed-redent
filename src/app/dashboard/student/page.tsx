@@ -2,7 +2,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import DarkModeToggle from "@/components/DarkModeToggle";
 import NotificationScheduler from "@/components/NotificationScheduler";
 
 import { getStudentData } from "@/lib/data";
@@ -34,9 +33,9 @@ export default async function StudentDashboard() {
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Welcome back, {userName} 🐹
           </h1>
-          <div className="flex items-center gap-4">
+          {/* <div className="flex items-center gap-4">
             <DarkModeToggle />
-          </div>
+          </div> */}
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">
