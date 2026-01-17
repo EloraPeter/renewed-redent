@@ -141,15 +141,16 @@ export async function getLecturerData(userId: string) {
       : 0,
   }));
 
-  // Pending / new submissions (not yet graded)
+  // Pending / new submissions (using assignments table instead of submissions)
   const pendingRes = await pool.query(
     `SELECT COUNT(*) as count
-     FROM submissions s
-     JOIN assignments a ON s.assignment_id = a.id
-     JOIN courses c ON a.course_id = c.id
-     WHERE c.lecturer_id = $1
-       AND s.graded = false
-       AND s.submitted_at IS NOT NULL`,
+   FROM assignments a
+   JOIN courses c ON a.course_id = c.id
+   WHERE c.user_id = $1
+     AND a.submitted_at IS NOT NULL
+     AND (a.graded = false OR a.graded IS NULL)  -- if you have a graded column
+     AND a.due_date >= CURRENT_DATE - INTERVAL '14 days'  -- optional: recent ones only
+  `,
     [userId]
   );
   const pendingSubmissions = Number(pendingRes.rows[0]?.count ?? 0);
