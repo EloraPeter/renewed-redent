@@ -157,7 +157,7 @@ export async function getLecturerData(userId: string) {
   const pendingSubmissions = Number(pendingRes.rows[0]?.count ?? 0);
   // Assignments that need grading soon (due in next 7 days or already overdue)
   const toGradeRes = await pool.query(
-  `SELECT a.title, a.due_date::text AS due_date
+    `SELECT a.title, a.due_date::text AS due_date
    FROM assignments a
    JOIN courses c ON a.course_id = c.id
    WHERE c.user_id = $1
@@ -165,8 +165,8 @@ export async function getLecturerData(userId: string) {
      AND a.due_date <= CURRENT_DATE + INTERVAL '7 days'
    ORDER BY a.due_date ASC
    LIMIT 5`,
-  [userId]
-);
+    [userId]
+  );
   const upcomingAssignmentsToGrade = toGradeRes.rows as AssignmentItem[];
 
   // Announcements posted this week (example quick stat)
