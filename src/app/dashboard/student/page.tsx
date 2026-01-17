@@ -21,7 +21,7 @@ export default async function StudentDashboard() {
     { href: "/dashboard/student", label: "Dashboard", icon: "Home" },
     { href: "/dashboard/student/classes", label: "Classes", icon: "Calendar" },
     { href: "/dashboard/student/assignments", label: "Assignments", icon: "BookOpen" },
-    { href: "/dashboard/student/routines", label: "Schedule", icon: "Clock" },
+    { href: "/dashboard/student/routines", label: "routines", icon: "Clock" },
     { href: "/dashboard/settings", label: "Settings", icon: "Settings" },
   ];
 
