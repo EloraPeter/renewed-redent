@@ -51,7 +51,31 @@ export async function deleteRoutine(id: string) {
 
 export async function updateRoutine(id: string, formData: FormData) {
   'use server';
-  // Placeholder — implement later
-  console.log('Update called for id:', id);
-  return { success: true, message: 'Edit not implemented yet' };
+  const userId = await getUserId();
+  const title = (formData.get('title') as string)?.trim();
+  const time = formData.get('time') as string;
+
+  if (!title || title.length < 1 || !time) {
+    return { error: 'Title and time are required' };
+  }
+
+  try {
+    const res = await pool.query(
+      `UPDATE routines
+       SET title = $1, time = $2
+       WHERE id = $3 AND user_id = $4
+       RETURNING id`,
+      [title, time, id, userId]
+    );
+
+    if (res.rowCount === 0) {
+      return { error: 'Routine not found or not owned by you' };
+    }
+
+    revalidatePath('/dashboard/student/routines');
+    return { success: true };
+  } catch (err) {
+    console.error(err);
+    return { error: 'Failed to update routine' };
+  }
 }
