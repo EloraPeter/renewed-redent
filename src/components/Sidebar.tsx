@@ -4,7 +4,7 @@
 import Link from "next/link";
 import SignOutButton from "@/components/SignOutButton";
 import { useEffect, useRef } from "react";
-import { Home, Calendar, BookOpen, Clock, Settings, X } from "lucide-react";
+import { Home, Calendar, BookOpen, FileText, Clock, Settings, X } from "lucide-react";
 
 type NavItem = {
   href: string;
@@ -17,6 +17,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Calendar,
   BookOpen,
   Clock,
+  FileText,
   Settings,
 };
 
