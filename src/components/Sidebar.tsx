@@ -88,7 +88,8 @@ export default function Sidebar({ navItems, role }: SidebarProps) {
 
         <nav className="px-6 py-8 space-y-2">
           {navItems.map((item) => {
-            const Icon = iconMap[item.icon];
+            const Icon = iconMap[item.icon as keyof typeof iconMap];
+            if (!Icon) return null;
             return (
               <Link
                 key={item.href}
