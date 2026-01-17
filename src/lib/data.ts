@@ -115,27 +115,30 @@ export async function getLecturerData(userId: string) {
   const weeklyClasses = weeklyRes.rows;
 
   // ── Simple aggregated stats (per course) ─────────────────────────
+  // Using only existing tables (no submissions table)
   const statsRes = await pool.query(
     `SELECT 
-       c.name AS course_name,
-       COUNT(a.id) FILTER (WHERE a.due_date < CURRENT_DATE) AS past_assignments,
-       COUNT(s.id) FILTER (WHERE s.submitted_at IS NOT NULL) AS total_submitted,
-       COUNT(s.id) FILTER (WHERE s.submitted_at <= a.due_date) AS on_time
-     FROM courses c
-     LEFT JOIN assignments a ON a.course_id = c.id
-     LEFT JOIN submissions s ON s.assignment_id = a.id
-     WHERE c.user_id = $1
-     GROUP BY c.id, c.name
-     HAVING COUNT(a.id) > 0`,
+     c.name AS course_name,
+     COUNT(a.id) FILTER (WHERE a.due_date < CURRENT_DATE) AS past_assignments,
+     COUNT(a.id) FILTER (WHERE a.submitted_at IS NOT NULL) AS submitted,
+     COUNT(a.id) FILTER (WHERE a.submitted_at IS NOT NULL 
+                      AND a.submitted_at <= a.due_date) AS on_time
+   FROM courses c
+   LEFT JOIN assignments a ON a.course_id = c.id
+   WHERE c.user_id = $1
+   GROUP BY c.id, c.name
+   HAVING COUNT(a.id) > 0`,
     [userId]
   );
 
   const courseStats = statsRes.rows.map(r => ({
     course: r.course_name,
     past: Number(r.past_assignments),
-    submitted: Number(r.total_submitted),
+    submitted: Number(r.submitted),
     onTime: Number(r.on_time),
-    onTimePercent: r.past > 0 ? Math.round((r.on_time / r.past) * 100) : 0,
+    onTimePercent: r.past_assignments > 0
+      ? Math.round((Number(r.on_time) / Number(r.past_assignments)) * 100)
+      : 0,
   }));
 
   // Pending / new submissions (not yet graded)
