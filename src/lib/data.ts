@@ -89,6 +89,55 @@ export async function getLecturerData(userId: string) {
   );
   const todayClasses = classesRes.rows as ClassItem[];
 
+  // ── Weekly classes ───────────────────────────────────────────────
+  const weeklyRes = await pool.query(
+    `SELECT 
+       INITCAP(LOWER(day)) AS weekday,  -- e.g. Monday, Tuesday
+       name,
+       start_time::text AS start_time,
+       end_time::text AS end_time,
+       location
+     FROM courses
+     WHERE user_id = $1
+     ORDER BY 
+       CASE LOWER(day)
+         WHEN 'monday'    THEN 1
+         WHEN 'tuesday'   THEN 2
+         WHEN 'wednesday' THEN 3
+         WHEN 'thursday'  THEN 4
+         WHEN 'friday'    THEN 5
+         WHEN 'saturday'  THEN 6
+         WHEN 'sunday'    THEN 7
+         ELSE 8
+       END, start_time`,
+    [userId]
+  );
+  const weeklyClasses = weeklyRes.rows;
+
+  // ── Simple aggregated stats (per course) ─────────────────────────
+  const statsRes = await pool.query(
+    `SELECT 
+       c.name AS course_name,
+       COUNT(a.id) FILTER (WHERE a.due_date < CURRENT_DATE) AS past_assignments,
+       COUNT(s.id) FILTER (WHERE s.submitted_at IS NOT NULL) AS total_submitted,
+       COUNT(s.id) FILTER (WHERE s.submitted_at <= a.due_date) AS on_time
+     FROM courses c
+     LEFT JOIN assignments a ON a.course_id = c.id
+     LEFT JOIN submissions s ON s.assignment_id = a.id
+     WHERE c.user_id = $1
+     GROUP BY c.id, c.name
+     HAVING COUNT(a.id) > 0`,
+    [userId]
+  );
+
+  const courseStats = statsRes.rows.map(r => ({
+    course: r.course_name,
+    past: Number(r.past_assignments),
+    submitted: Number(r.total_submitted),
+    onTime: Number(r.on_time),
+    onTimePercent: r.past > 0 ? Math.round((r.on_time / r.past) * 100) : 0,
+  }));
+
   // Pending / new submissions (not yet graded)
   const pendingRes = await pool.query(
     `SELECT COUNT(*) as count
@@ -131,5 +180,7 @@ export async function getLecturerData(userId: string) {
     pendingSubmissions,
     upcomingAssignmentsToGrade,
     recentAnnouncementsCount,
+    weeklyClasses,       // ← new
+    courseStats,
   };
 }
