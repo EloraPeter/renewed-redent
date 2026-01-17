@@ -141,32 +141,32 @@ export async function getLecturerData(userId: string) {
       : 0,
   }));
 
-  // Pending / new submissions (using assignments table instead of submissions)
+  // Pending / new submissions (using assignments table)
   const pendingRes = await pool.query(
     `SELECT COUNT(*) as count
    FROM assignments a
    JOIN courses c ON a.course_id = c.id
    WHERE c.user_id = $1
      AND a.submitted_at IS NOT NULL
-     AND (a.graded = false OR a.graded IS NULL)  -- if you have a graded column
-     AND a.due_date >= CURRENT_DATE - INTERVAL '14 days'  -- optional: recent ones only
+     -- Optional: only count fairly recent ones so the number doesn't grow forever
+     AND a.submitted_at >= CURRENT_DATE - INTERVAL '30 days'
+     -- If you later add a graded/status column, add here: AND (a.graded = false OR a.status = 'pending')
   `,
     [userId]
   );
   const pendingSubmissions = Number(pendingRes.rows[0]?.count ?? 0);
-
   // Assignments that need grading soon (due in next 7 days or already overdue)
   const toGradeRes = await pool.query(
-    `SELECT a.title, a.due_date
-     FROM assignments a
-     JOIN courses c ON a.course_id = c.id
-     WHERE c.lecturer_id = $1
-       AND a.due_date >= CURRENT_DATE - INTERVAL '2 days'   -- include a bit of buffer for late subs
-       AND a.due_date <= CURRENT_DATE + INTERVAL '7 days'
-     ORDER BY a.due_date ASC
-     LIMIT 5`,
-    [userId]
-  );
+  `SELECT a.title, a.due_date::text AS due_date
+   FROM assignments a
+   JOIN courses c ON a.course_id = c.id
+   WHERE c.user_id = $1
+     AND a.due_date >= CURRENT_DATE - INTERVAL '2 days'
+     AND a.due_date <= CURRENT_DATE + INTERVAL '7 days'
+   ORDER BY a.due_date ASC
+   LIMIT 5`,
+  [userId]
+);
   const upcomingAssignmentsToGrade = toGradeRes.rows as AssignmentItem[];
 
   // Announcements posted this week (example quick stat)
