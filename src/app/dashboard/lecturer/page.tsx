@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import NotificationScheduler from "@/components/NotificationScheduler";
 import { getLecturerData } from "@/lib/data";
+import Sidebar from "@/components/Sidebar";
+
 
 // Simple loading component (client-side would be better with Suspense, but this is fast for now)
 function SkeletonCard() {
@@ -22,8 +24,19 @@ export default async function LecturerDashboard() {
     const hasClassesToday = data.todayClasses.length > 0;
     const hasWeekly = data.weeklyClasses.length > 0;
 
+    const lecturerNavItems = [
+    { href: '/dashboard/lecturer', label: 'Dashboard', icon: 'Home' },
+    { href: '/dashboard/lecturer/classes', label: 'My Courses', icon: 'BookOpen' },
+    { href: '/dashboard/lecturer/assignments', label: 'Assignments', icon: 'FileText' },
+    { href: '/dashboard/settings', label: 'Settings', icon: 'Settings' },
+  ];
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
+            <Sidebar role="lecturer" navItems={lecturerNavItems} />
+
+
+
             <header className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl md:text-3xl font-bold">
                     Welcome back, {userName} 👨‍🏫
