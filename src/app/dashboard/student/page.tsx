@@ -33,9 +33,7 @@ export default async function StudentDashboard() {
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Welcome back, {userName} 🐹
           </h1>
-          {/* <div className="flex items-center gap-4">
-            <DarkModeToggle />
-          </div> */}
+          
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">

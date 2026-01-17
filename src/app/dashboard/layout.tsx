@@ -1,5 +1,4 @@
 // src/app/dashboard/layout.tsx
-// NO 'use client' → this is now a Server Component
 
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
@@ -17,14 +16,11 @@ export default async function DashboardLayout({
     redirect('/login');
   }
 
-  // Optional: role check (if you store role in session.user.role)
-  // const role = session.user.role as string | undefined;
-  // Example: if (role !== 'lecturer' && /* path is lecturer */) redirect(...);
 
   return (
     <DashboardClientWrapper>
-                  <DarkModeToggle />
-      
+      <DarkModeToggle />
+
       {children}
     </DashboardClientWrapper>
   );
