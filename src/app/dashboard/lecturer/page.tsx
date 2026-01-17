@@ -45,10 +45,10 @@ export default async function LecturerDashboard() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">To Grade Soon</p>
                     <p className="text-3xl font-bold">{data.upcomingAssignmentsToGrade.length}</p>
                 </div>
-                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                {/* <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
                     <p className="text-sm text-gray-500 dark:text-gray-400">Announcements (week)</p>
                     <p className="text-3xl font-bold">{data.recentAnnouncementsCount}</p>
-                </div>
+                </div> */}
             </div>
 
             {/* Today's classes */}

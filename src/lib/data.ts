@@ -169,21 +169,21 @@ export async function getLecturerData(userId: string) {
   );
   const upcomingAssignmentsToGrade = toGradeRes.rows as AssignmentItem[];
 
-  // Announcements posted this week (example quick stat)
-  const announcementsRes = await pool.query(
-    `SELECT COUNT(*) as count
-     FROM announcements
-     WHERE author_id = $1
-       AND created_at >= CURRENT_DATE - INTERVAL '7 days'`,
-    [userId]
-  );
-  const recentAnnouncementsCount = Number(announcementsRes.rows[0]?.count ?? 0);
+  // // Announcements posted this week (example quick stat)
+  // const announcementsRes = await pool.query(
+  //   `SELECT COUNT(*) as count
+  //    FROM announcements
+  //    WHERE author_id = $1
+  //      AND created_at >= CURRENT_DATE - INTERVAL '7 days'`,
+  //   [userId]
+  // );
+  // const recentAnnouncementsCount = Number(announcementsRes.rows[0]?.count ?? 0);
 
   return {
     todayClasses,
     pendingSubmissions,
     upcomingAssignmentsToGrade,
-    recentAnnouncementsCount,
+    // recentAnnouncementsCount,
     weeklyClasses,       // ← new
     courseStats,
   };
