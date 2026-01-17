@@ -28,7 +28,6 @@ export default async function LecturerDashboard() {
                 <h1 className="text-2xl md:text-3xl font-bold">
                     Welcome back, {userName} 👨‍🏫
                 </h1>
-                {/* DarkModeToggle goes here if you have it */}
             </header>
 
             {/* Quick stats row */}
