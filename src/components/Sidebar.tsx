@@ -61,9 +61,10 @@ export default function Sidebar({ navItems, role }: SidebarProps) {
     document.addEventListener("click", handleOutsideClick);
 
     return () => {
-      toggleBtn.removeEventListener("click", openSidebar);
+      toggleBtn.removeEventListener("click", handleToggleClick);
       document.removeEventListener("click", handleOutsideClick);
     };
+
   }, []);
 
   return (

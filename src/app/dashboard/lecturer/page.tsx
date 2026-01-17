@@ -26,11 +26,11 @@ export default async function LecturerDashboard() {
     const hasWeekly = data.weeklyClasses.length > 0;
 
     const lecturerNavItems = [
-    { href: '/dashboard/lecturer', label: 'Dashboard', icon: 'Home' },
-    { href: '/dashboard/lecturer/classes', label: 'My Courses', icon: 'BookOpen' },
-    { href: '/dashboard/lecturer/assignments', label: 'Assignments', icon: 'FileText' },
-    { href: '/dashboard/settings', label: 'Settings', icon: 'Settings' },
-  ];
+        { href: '/dashboard/lecturer', label: 'Dashboard', icon: 'Home' },
+        { href: '/dashboard/lecturer/classes', label: 'My Courses', icon: 'BookOpen' },
+        { href: '/dashboard/lecturer/assignments', label: 'Assignments', icon: 'FileText' },
+        { href: '/dashboard/settings', label: 'Settings', icon: 'Settings' },
+    ];
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
@@ -39,12 +39,17 @@ export default async function LecturerDashboard() {
 
 
             <header className="flex justify-between items-center mb-8">
+                <button
+                    id="menu-toggle"
+                    className="md:hidden text-gray-900 dark:text-gray-100"
+                >
+                    <Menu size={24} />
+                </button>
                 <h1 className="text-2xl md:text-3xl font-bold">
                     Welcome back, {userName} 👨‍🏫
                 </h1>
-                <button id="menu-toggle" className="text-gray-900 dark:text-gray-100">
-            <Menu size={24} />
-          </button>
+                
+
             </header>
 
             {/* Quick stats row */}

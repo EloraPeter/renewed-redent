@@ -31,12 +31,17 @@ export default async function StudentDashboard() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white dark:bg-gray-800 shadow-sm px-6 py-4 flex items-center justify-between">
+          <button
+            id="menu-toggle"
+            className="md:hidden text-gray-900 dark:text-gray-100"
+          >
+            <Menu size={24} />
+          </button>
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Welcome back, {userName} 🐹
           </h1>
-          <button id="menu-toggle" className="text-gray-900 dark:text-gray-100">
-            <Menu size={24} />
-          </button>
+
+
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">
@@ -80,11 +85,11 @@ export default async function StudentDashboard() {
 
       {/* Client component gets real props */}
       <NotificationScheduler
-  role="student"
-  wakeUpTime={wakeUpTime}
-  todayClasses={todayClasses}
-  upcomingAssignments={upcomingAssignments}
-/>
+        role="student"
+        wakeUpTime={wakeUpTime}
+        todayClasses={todayClasses}
+        upcomingAssignments={upcomingAssignments}
+      />
     </div>
   );
 }
