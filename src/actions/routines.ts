@@ -38,16 +38,16 @@ export async function getUserRoutines() {
 export async function createRoutine(formData: FormData) {
   const userId = await getUserId();
   const title = (formData.get('title') as string)?.trim();
-  const time = formData.get('time') as string; // e.g. "07:00"
+  const time = formData.get('time') as string; // "HH:mm"
 
   if (!title || !time) {
     return { error: 'Title and time are required' };
   }
 
-  // Insert as JSONB (minimal structure – extend later if needed)
+  // Fixed version – cast $3::text
   await pool.query(
     `INSERT INTO routines (user_id, title, schedule, duration_minutes, days)
-     VALUES ($1, $2, jsonb_build_object('time', $3, 'type', 'daily'), 15, ARRAY['daily'])`,
+     VALUES ($1, $2, jsonb_build_object('time', $3::text, 'type', 'daily'), 15, ARRAY['daily'])`,
     [userId, title, time]
   );
 
