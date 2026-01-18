@@ -22,13 +22,14 @@ export async function getUserRoutines() {
     `SELECT 
        id, 
        title, 
-       schedule->>'time' AS time,           -- extract time from JSONB
+       schedule->>'time'           AS time,
        duration_minutes,
-       schedule->>'type' AS schedule_type,
+       schedule->>'type'           AS schedule_type,
+       schedule->>'date'           AS once_date,          -- only meaningful when type='once'
        days
      FROM routines 
      WHERE user_id = $1 
-     ORDER BY (schedule->>'time') ASC`,     // sort by extracted time
+     ORDER BY (schedule->>'time') ASC`,
     [userId]
   );
   return res.rows;

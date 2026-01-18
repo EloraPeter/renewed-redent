@@ -1,8 +1,9 @@
 export interface Routine {
   id: string;
   title: string;
-  time: string;           // from schedule->>'time'
+  time: string;               // "HH:mm"
   duration_minutes?: number;
-  days?: string[];        // e.g. ['monday', 'tuesday'] or ['daily']
-  schedule_type?: string; // e.g. 'daily', 'weekly'
+  schedule_type: 'daily' | 'weekly' | 'once';
+  days?: string[];            // only relevant for weekly
+  once_date?: string;         // only relevant for once — ISO string "2025-04-15"
 }
