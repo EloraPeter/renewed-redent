@@ -22,14 +22,14 @@ export async function getUserRoutines() {
     `SELECT 
        id, 
        title, 
-       schedule->>'time'           AS time,
        duration_minutes,
-       schedule->>'type'           AS schedule_type,
-       schedule->>'date'           AS once_date,          -- only meaningful when type='once'
-       days
+       schedule_type,
+       once_date,
+       days,
+       affects_wake_up
      FROM routines 
      WHERE user_id = $1 
-     ORDER BY (schedule->>'time') ASC`,
+     ORDER BY title ASC`,  // or add an order_index column later if you want custom sorting
     [userId]
   );
   return res.rows;
