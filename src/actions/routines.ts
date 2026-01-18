@@ -37,18 +37,42 @@ export async function getUserRoutines() {
 
 export async function createRoutine(formData: FormData) {
   const userId = await getUserId();
-  const title = (formData.get('title') as string)?.trim();
-  const time = formData.get('time') as string; // "HH:mm"
+  const title       = (formData.get('title') as string)?.trim();
+  const time        = formData.get('time') as string;
+  const scheduleType = formData.get('schedule_type') as string; // 'daily' | 'weekly' | 'once'
+  const durationStr = formData.get('duration_minutes') as string;
+  const onceDate    = formData.get('once_date') as string | null;
 
-  if (!title || !time) {
-    return { error: 'Title and time are required' };
+  // Handle multi-value 'days'
+  const daysRaw = formData.getAll('days') as string[]; // array from checkboxes
+
+  if (!title || !time || !scheduleType) {
+    return { error: 'Title, time, and repeat type are required' };
   }
 
-  // Fixed version – cast $3::text
+  let scheduleObj: any = { time, type: scheduleType };
+
+  let finalDays: string[] = ['daily'];
+
+  if (scheduleType === 'weekly') {
+    finalDays = daysRaw.length > 0 ? daysRaw : ['monday']; // fallback
+  } else if (scheduleType === 'once') {
+    if (!onceDate) return { error: 'Date is required for one-time routines' };
+    scheduleObj.date = onceDate;
+  }
+
+  const duration = durationStr ? parseInt(durationStr, 10) : 15;
+
   await pool.query(
     `INSERT INTO routines (user_id, title, schedule, duration_minutes, days)
-     VALUES ($1, $2, jsonb_build_object('time', $3::text, 'type', 'daily'), 15, ARRAY['daily'])`,
-    [userId, title, time]
+     VALUES ($1, $2, $3::jsonb, $4, $5)`,
+    [
+      userId,
+      title,
+      JSON.stringify(scheduleObj),
+      duration,
+      finalDays
+    ]
   );
 
   revalidatePath('/dashboard/student/routines');
