@@ -335,6 +335,21 @@ export default function RoutinesClient({
                                 className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                             />
 
+                            <div>
+                                <label className="block text-sm font-medium mb-1.5">Affects wake-up time?</label>
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="checkbox"
+                                        name="affects_wake_up"
+                                        defaultChecked={editingRoutine.affects_wake_up}   // ← uses the current value
+                                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    />
+                                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                                        Include this in morning prep / wake-up calculation
+                                    </span>
+                                </div>
+                            </div>
+
                             <div className="flex justify-end gap-4 mt-6">
                                 <button type="button" onClick={() => setEditingRoutine(null)} className="px-5 py-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                                     Cancel
