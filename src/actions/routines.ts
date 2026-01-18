@@ -93,22 +93,44 @@ export async function deleteRoutine(id: string) {
 
 export async function updateRoutine(id: string, formData: FormData) {
   const userId = await getUserId();
-  const title = (formData.get('title') as string)?.trim();
-  const time = formData.get('time') as string;
 
-  if (!title || !time) {
-    return { error: 'Title and time are required' };
+  const title       = (formData.get('title') as string)?.trim();
+  const time        = formData.get('time') as string;
+  const scheduleType = formData.get('schedule_type') as string;
+  const durationStr = formData.get('duration_minutes') as string;
+  const onceDate    = formData.get('once_date') as string | null;
+  const daysRaw     = formData.getAll('days') as string[];
+
+  if (!title || !time || !scheduleType) {
+    return { error: 'Title, time, and repeat type are required' };
   }
+
+  let scheduleObj: Record<string, any> = { time, type: scheduleType };
+
+  let finalDays: string[] = ['daily'];
+
+  if (scheduleType === 'weekly') {
+    finalDays = daysRaw.length > 0 ? daysRaw : ['monday']; // or keep existing if empty — but for simplicity
+  } else if (scheduleType === 'once') {
+    if (!onceDate) {
+      return { error: 'Date is required for one-time routines' };
+    }
+    scheduleObj.date = onceDate;
+  }
+
+  const duration = durationStr ? parseInt(durationStr, 10) : 15;
 
   try {
     const res = await pool.query(
       `UPDATE routines
        SET 
          title = $1,
-         schedule = jsonb_set(schedule, '{time}', to_jsonb($2::text))
-       WHERE id = $3 AND user_id = $4
+         schedule = $2::jsonb,
+         duration_minutes = $3,
+         days = $4
+       WHERE id = $5 AND user_id = $6
        RETURNING id`,
-      [title, time, id, userId]
+      [title, JSON.stringify(scheduleObj), duration, finalDays, id, userId]
     );
 
     if (res.rowCount === 0) {
@@ -118,7 +140,7 @@ export async function updateRoutine(id: string, formData: FormData) {
     revalidatePath('/dashboard/student/routines');
     return { success: true };
   } catch (err) {
-    console.error(err);
+    console.error('Update routine failed:', err);
     return { error: 'Failed to update routine' };
   }
 }
