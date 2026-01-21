@@ -1,5 +1,5 @@
 // src/app/dashboard/student/page.tsx
-"use client";
+// "use client";
 
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
