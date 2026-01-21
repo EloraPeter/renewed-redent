@@ -78,15 +78,23 @@ export async function getLecturerData(userId: string) {
   const today = new Date().toISOString().split("T")[0];
 
   // Today's classes – using courses where user is the owner/lecturer
+  const todayWeekday = new Date().toLocaleString('en-US', { weekday: 'long' }).toLowerCase(); // e.g. "monday"
+
   const classesRes = await pool.query(
-    `SELECT name, start_time::text AS start_time
-     FROM courses
-     WHERE user_id = $1
-       AND LOWER(TRIM(day)) = LOWER(TRIM(to_char(CURRENT_DATE, 'Day')))
-     ORDER BY start_time
-     LIMIT 10`,
-    [userId]
+    `SELECT 
+     name, 
+     code,
+     start_time::text AS start_time,
+     end_time::text AS end_time,
+     location
+   FROM courses
+   WHERE user_id = $1 
+     AND $2 = ANY(days)          -- ← checks if today's weekday is in the days array
+   ORDER BY start_time ASC
+   LIMIT 10`,
+    [userId, todayWeekday]
   );
+
   const todayClasses = classesRes.rows as ClassItem[];
 
   // ── Weekly classes ───────────────────────────────────────────────
