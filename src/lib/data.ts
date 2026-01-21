@@ -100,24 +100,32 @@ export async function getLecturerData(userId: string) {
   // ── Weekly classes ───────────────────────────────────────────────
   const weeklyRes = await pool.query(
     `SELECT 
-       INITCAP(LOWER(day)) AS weekday,  -- e.g. Monday, Tuesday
+     INITCAP(LOWER(unnested_day)) AS weekday,  -- e.g. Monday, Tuesday
+     name,
+     start_time::text AS start_time,
+     end_time::text AS end_time,
+     location
+   FROM (
+     SELECT 
        name,
-       start_time::text AS start_time,
-       end_time::text AS end_time,
-       location
+       start_time,
+       end_time,
+       location,
+       unnest(days) AS unnested_day  -- expand array into one row per day
      FROM courses
      WHERE user_id = $1
-     ORDER BY 
-       CASE LOWER(day)
-         WHEN 'monday'    THEN 1
-         WHEN 'tuesday'   THEN 2
-         WHEN 'wednesday' THEN 3
-         WHEN 'thursday'  THEN 4
-         WHEN 'friday'    THEN 5
-         WHEN 'saturday'  THEN 6
-         WHEN 'sunday'    THEN 7
-         ELSE 8
-       END, start_time`,
+   ) sub
+   ORDER BY 
+     CASE LOWER(unnested_day)
+       WHEN 'monday'    THEN 1
+       WHEN 'tuesday'   THEN 2
+       WHEN 'wednesday' THEN 3
+       WHEN 'thursday'  THEN 4
+       WHEN 'friday'    THEN 5
+       WHEN 'saturday'  THEN 6
+       WHEN 'sunday'    THEN 7
+       ELSE 8
+     END, start_time`,
     [userId]
   );
   const weeklyClasses = weeklyRes.rows;
