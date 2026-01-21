@@ -4,20 +4,15 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import NotificationScheduler from "@/components/NotificationScheduler";
 import { Menu, BookOpenIcon, CalendarIcon, FlameIcon, CoffeeIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 
 type Props = {
-    userName: string;
-    wakeUpTime: string | null;
-    firstClass: any | null;
-    totalPrepMinutes: number;
-    message?: string; // ← add this line
-    todayClasses: any[];
-    upcomingAssignments: any[];
+  userName: string;
+  wakeUpTime: string | null;
+  firstClass: any | null;
+  totalPrepMinutes: number;
+  todayClasses: any[];
+  upcomingAssignments: any[];
 };
-
 
 export default function StudentDashboardClient({
   userName,
@@ -28,7 +23,7 @@ export default function StudentDashboardClient({
   upcomingAssignments,
 }: Props) {
   const [currentTimeGreeting, setCurrentTimeGreeting] = useState("");
-  const [streakProgress, setStreakProgress] = useState(70);
+  const [streakProgress, setStreakProgress] = useState(7); // default 7 days
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -47,9 +42,12 @@ export default function StudentDashboardClient({
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-pink-50 to-blue-50 dark:from-gray-950 dark:to-gray-900 transition-colors">
+      {/* Sidebar */}
       <Sidebar role="student" navItems={studentNavItems} />
 
+      {/* Main dashboard area */}
       <div className="flex-1 flex flex-col overflow-hidden">
+
         {/* Header */}
         <header className="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between">
           <button
@@ -71,9 +69,9 @@ export default function StudentDashboardClient({
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-6 md:p-10 space-y-10">
-          
-          {/* Wake-Up Card */}
-          <section className="bg-white dark:bg-gray-800 rounded-3xl p-6 flex flex-col gap-4 border border-gray-200 dark:border-gray-700 hover:scale-105 transition-transform">
+
+          {/* Wake-Up Suggestion */}
+          <section className="bg-white dark:bg-gray-800 rounded-3xl p-6 flex flex-col gap-4 border border-gray-200 dark:border-gray-700 transform hover:scale-105 transition-all duration-300">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <CoffeeIcon className="w-6 h-6 text-yellow-400" />
@@ -93,31 +91,29 @@ export default function StudentDashboardClient({
                 </p>
               )}
             </div>
-            <Button className="self-start bg-gradient-to-r from-pink-400 to-purple-500 text-white hover:from-pink-500 hover:to-purple-600 transition">
-              Set Alarm
-            </Button>
           </section>
 
-          {/* Stats Grid */}
+          {/* Stats */}
           <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            {/* Deadlines */}
-            <div className="bg-pink-50 dark:bg-pink-900/20 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer">
+
+            {/* Upcoming Deadlines */}
+            <div className="bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-pink-700 dark:text-pink-200 flex items-center gap-2">
                   <BookOpenIcon className="w-5 h-5" />
                   Upcoming Deadlines
                 </h3>
-                <Badge variant="secondary">{upcomingAssignments.length}</Badge>
+                <span className="text-white bg-pink-500 rounded-full px-3 py-1 text-sm font-semibold">
+                  {upcomingAssignments.length}
+                </span>
               </div>
-              <Progress value={Math.min(upcomingAssignments.length * 10, 100)} className="h-3 mt-2 rounded-full bg-pink-100 dark:bg-pink-800" />
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Don’t let anything slip!
               </p>
             </div>
 
             {/* Today's Classes */}
-            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer">
+            <div className="bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
               <h3 className="text-lg font-bold text-purple-700 dark:text-purple-200 flex items-center gap-2">
                 <CalendarIcon className="w-5 h-5" />
                 Today's Classes
@@ -138,13 +134,12 @@ export default function StudentDashboardClient({
             </div>
 
             {/* Streak */}
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer">
+            <div className="bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
               <h3 className="text-lg font-bold text-yellow-700 dark:text-yellow-200 flex items-center gap-2">
                 <FlameIcon className="w-5 h-5" />
                 Streak
               </h3>
               <p className="text-3xl font-extrabold text-yellow-600 dark:text-yellow-400">{streakProgress} days 🔥</p>
-              <Progress value={streakProgress} className="h-3 mt-1 rounded-full bg-yellow-100 dark:bg-yellow-800" />
               <p className="text-sm text-gray-500">Keep it going!</p>
             </div>
 
@@ -161,6 +156,7 @@ export default function StudentDashboardClient({
         </main>
       </div>
 
+      {/* Notifications */}
       <NotificationScheduler
         role="student"
         wakeUpTime={wakeUpTime}
