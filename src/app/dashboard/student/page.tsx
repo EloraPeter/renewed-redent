@@ -15,8 +15,7 @@ export default async function StudentDashboard() {
   const userName = session.user.name || session.user.email?.split("@")[0] || "Student";
 
   // Fetch real data
-  const { wakeUpTime, todayClasses, upcomingAssignments } = await getStudentData(userId);
-
+  const { wakeUpTime, firstClass, totalPrepMinutes, message, todayClasses, upcomingAssignments } = await getStudentData(userId);
   const studentNavItems = [
     { href: "/dashboard/student", label: "Dashboard", icon: "Home" },
     { href: "/dashboard/student/classes", label: "Classes", icon: "Calendar" },
@@ -30,33 +29,55 @@ export default async function StudentDashboard() {
       <Sidebar role="student" navItems={studentNavItems} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white dark:bg-gray-800 shadow-sm px-6 py-4 flex items-center justify-between">
-          <button
-            id="menu-toggle"
-            className="md:hidden text-gray-900 dark:text-gray-100"
-          >
-            <Menu size={24} />
-          </button>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Welcome back, {userName} 🐹
-          </h1>
+        <header className="sticky top-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800 px-4 md:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button id="menu-toggle" className="md:hidden">
+              <Menu />
+            </button>
 
-
-        </header>
-
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-              <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Upcoming Deadlines
-              </h3>
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-                {upcomingAssignments.length}
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                tasks due soon
+            <div>
+              <h1 className="text-xl md:text-2xl font-semibold">
+                Hi {userName} 👋
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Let’s make today productive
               </p>
             </div>
+          </div>
+        </header>
+
+
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
+            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Suggested Wake-Up
+            </h3>
+            {message ? (
+              <p className="text-xl font-bold text-gray-600 dark:text-gray-300">{message}</p>
+            ) : wakeUpTime ? (
+              <>
+                <p className="text-3xl font-bold text-blue-600">{wakeUpTime}</p>
+                {firstClass && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    For {firstClass.name} at {firstClass.start_time}
+                    {firstClass.location && ` (${firstClass.location})`}
+                  </p>
+                )}
+                <p className="text-sm text-gray-500 mt-2">
+                  Total prep: ~{totalPrepMinutes} min (including commute & buffers)
+                </p>
+              </>
+            ) : (
+              <p className="text-xl text-gray-600">Loading wake-up...</p>
+            )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="min-w-[220px] bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-5 shadow-lg">
+              <p className="text-sm opacity-90">Deadlines</p>
+              <p className="text-3xl font-bold">{upcomingAssignments.length}</p>
+              <p className="text-xs opacity-80 mt-1">Due soon</p>
+            </div>
+
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
               <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">

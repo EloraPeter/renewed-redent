@@ -37,10 +37,26 @@ export async function getStudentData(userId: string) {
     ? `${Math.floor(totalPrep / 60)}h ${totalPrep % 60}m prep → wake up early`
     : 'Flexible wake-up';
 
-  // Today's classes (temporary empty – add real query later)
-  const todayClasses: ClassItem[] = [];
+  // Today's classes 
+  const todayWeekday = new Date().toLocaleString('en-US', { weekday: 'long', timeZone: 'Africa/Lagos' }).toLowerCase();
+ 
+  const classesRes = await pool.query(
+    `SELECT 
+     name, 
+     code,
+     start_time::text AS start_time,
+     end_time::text AS end_time,
+     location
+   FROM courses
+   WHERE user_id = $1 
+     AND $2 = ANY(days)
+   ORDER BY start_time ASC`,
+    [userId, todayWeekday]  // todayWeekday from earlier
+  );
 
-  // Upcoming assignments (unchanged – works)
+  const todayClasses = classesRes.rows as ClassItem[];
+
+  // Upcoming assignments 
   const assignmentsRes = await pool.query(
     `SELECT a.title, a.due_date::text AS due_date
      FROM assignments a
@@ -53,8 +69,14 @@ export async function getStudentData(userId: string) {
   );
   const upcomingAssignments = assignmentsRes.rows as AssignmentItem[];
 
+  // NEW: Full wake-up calculation
+  const wakeUpData = await calculateWakeUpTime(userId);
+
   return {
-    wakeUpTime: suggestedWakeUp,
+    wakeUpTime: wakeUpData.wakeUpTime,
+    firstClass: wakeUpData.firstClass,
+    totalPrepMinutes: wakeUpData.totalPrepMinutes,
+    message: wakeUpData.message,
     todayClasses,
     upcomingAssignments,
   };
