@@ -17,7 +17,7 @@ export type AssignmentItem = {
 };
 
 // ──────────────────────────────────────────────
-// Student data (your original function)
+// Student data 
 // ──────────────────────────────────────────────
 export async function getStudentData(userId: string) {
   const today = new Date().toISOString().split("T")[0];
