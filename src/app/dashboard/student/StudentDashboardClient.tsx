@@ -75,7 +75,17 @@ export default function StudentDashboardClient({
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+                <main className="flex-1 overflow-y-auto px-5 md:px-10 py-8 space-y-10">
+                   <section className="space-y-1">
+    <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
+        {currentTimeGreeting}, {userName}
+    </h2>
+    <p className="text-gray-500 dark:text-gray-400">
+        Here’s what your day looks like
+    </p>
+</section>
+
+                   
                     {/* Wake-Up Card */}
                     <Card className="relative overflow-hidden border border-blue-200/50 dark:border-blue-900/40 bg-gradient-to-br from-white to-blue-50/40 dark:from-gray-900 dark:to-blue-950/20 shadow-sm">
                         <CardHeader className="pb-3">
