@@ -61,7 +61,7 @@ export async function getStudentData(userId: string) {
 }
 
 // ──────────────────────────────────────────────
-// Lecturer data (new function)
+// Lecturer data 
 // ──────────────────────────────────────────────
 export async function getLecturerData(userId: string) {
   const today = new Date().toISOString().split("T")[0];
@@ -191,5 +191,116 @@ export async function getLecturerData(userId: string) {
     // recentAnnouncementsCount,
     weeklyClasses,       // ← new
     courseStats,
+  };
+}
+
+// ──────────────────────────────────────────────
+// wakup time 
+// ────────────────────────────────────────────── 
+// Helper: Convert "HH:mm:ss" or "HH:mm" to minutes since midnight
+function timeToMinutes(timeStr: string): number {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 60 + (minutes || 0);
+}
+
+// Helper: Convert minutes back to "HH:mm" (handles negative/overflow)
+function minutesToTime(minutes: number): string {
+  minutes = (minutes + 1440) % 1440; // wrap around midnight
+  const hours = Math.floor(minutes / 60).toString().padStart(2, '0');
+  const mins = (minutes % 60).toString().padStart(2, '0');
+  return `${hours}:${mins}`;
+}
+
+export async function calculateWakeUpTime(userId: string): Promise<{
+  wakeUpTime: string | null;
+  firstClass: { name: string; start_time: string; location?: string } | null;
+  totalPrepMinutes: number;
+  message?: string;
+}> {
+  const todayWeekday = new Date().toLocaleString('en-US', {
+    weekday: 'long',
+    timeZone: 'Africa/Lagos'
+  }).toLowerCase(); // e.g. "wednesday"
+
+  // 1. Get earliest class today
+  const classRes = await pool.query(
+    `SELECT 
+       name, 
+       start_time::text AS start_time,
+       location
+     FROM courses
+     WHERE user_id = $1 
+       AND $2 = ANY(days)
+     ORDER BY start_time ASC
+     LIMIT 1`,
+    [userId, todayWeekday]
+  );
+
+  const firstClass = classRes.rows[0] || null;
+
+  if (!firstClass) {
+    return {
+      wakeUpTime: null,
+      firstClass: null,
+      totalPrepMinutes: 0,
+      message: 'No classes today — sleep in, no alarm!'
+    };
+  }
+
+  const targetMinutes = timeToMinutes(firstClass.start_time);
+
+  // 2. Get user commute settings
+  const profileRes = await pool.query(
+    `SELECT commute_mode, commute_distance_km, commute_affects_wake_up 
+     FROM profiles 
+     WHERE id = $1`,
+    [userId]
+  );
+  const profile = profileRes.rows[0] || {};
+  let commuteMin = 0;
+  if (profile.commute_affects_wake_up && profile.commute_distance_km > 0) {
+    const speedMinPerKm =
+      profile.commute_mode === 'trekking' ? 10 :
+        profile.commute_mode === 'bike' ? 5 :
+          2; // car
+    commuteMin = Math.ceil(profile.commute_distance_km * speedMinPerKm);
+  }
+
+  // 3. Get relevant prep routines (affects_wake_up = true + matches today)
+  const routinesRes = await pool.query(
+    `SELECT title, duration_minutes
+     FROM routines
+     WHERE user_id = $1 
+       AND affects_wake_up = true
+       AND (schedule_type = 'daily' 
+            OR $2 = ANY(days) 
+            OR (schedule_type = 'once' AND once_date = CURRENT_DATE))
+     ORDER BY id`,
+    [userId, todayWeekday]
+  );
+
+  const prepRoutines = routinesRes.rows;
+
+  // 4. Calculate total prep + buffers
+  const WAKE_UP_BUFFER = 5;
+  const TRANSITION_BUFFER = 5;
+
+  let totalPrepMin = prepRoutines.reduce((sum, r) => sum + r.duration_minutes, 0);
+  totalPrepMin += commuteMin;
+  totalPrepMin += (prepRoutines.length + (commuteMin > 0 ? 1 : 0) - 1) * TRANSITION_BUFFER; // between activities
+  totalPrepMin += WAKE_UP_BUFFER;
+
+  // 5. Backwards from first class
+  const wakeUpMinutes = targetMinutes - totalPrepMin;
+  const wakeUpTime = minutesToTime(wakeUpMinutes);
+
+  return {
+    wakeUpTime,
+    firstClass: {
+      name: firstClass.name,
+      start_time: firstClass.start_time,
+      location: firstClass.location || undefined
+    },
+    totalPrepMinutes: totalPrepMin,
   };
 }
