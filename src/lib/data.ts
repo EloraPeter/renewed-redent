@@ -24,34 +24,23 @@ export async function getStudentData(userId: string) {
 
   // Try to get wake-up time from routines
   const wakeUpRes = await pool.query(
-    `SELECT schedule->>'time' AS wake_up_time
+    `SELECT SUM(duration_minutes) AS total_prep_min
      FROM routines
      WHERE user_id = $1
-       AND title ILIKE 'wake up'`,
+       AND affects_wake_up = true
+       AND schedule_type = 'daily'`,
     [userId]
   );
-  const wakeUpTime = wakeUpRes.rows[0]?.wake_up_time ?? null;
 
-  // Today's classes
-  // Note: your current query uses 'classes' table and 'enrollments' table,
-  // but these tables don't exist in the schema you shared.
-  // For now we'll comment it out and return empty array.
-  // You may need to adjust this part later.
-  /*
-  const classesRes = await pool.query(
-    `SELECT name, start_time
-     FROM classes c
-     JOIN enrollments e ON c.id = e.class_id
-     WHERE e.user_id = $1
-       AND c.day_of_week = EXTRACT(DOW FROM CURRENT_DATE)
-     ORDER BY start_time`,
-    [userId]
-  );
-  const todayClasses = classesRes.rows as ClassItem[];
-  */
-  const todayClasses: ClassItem[] = []; // temporary
+  const totalPrep = wakeUpRes.rows[0]?.total_prep_min ?? 0;
+  const suggestedWakeUp = totalPrep > 0
+    ? `${Math.floor(totalPrep / 60)}h ${totalPrep % 60}m prep → wake up early`
+    : 'Flexible wake-up';
 
-  // Upcoming assignments (this should work with your current schema)
+  // Today's classes (temporary empty – add real query later)
+  const todayClasses: ClassItem[] = [];
+
+  // Upcoming assignments (unchanged – works)
   const assignmentsRes = await pool.query(
     `SELECT a.title, a.due_date::text AS due_date
      FROM assignments a
@@ -65,7 +54,7 @@ export async function getStudentData(userId: string) {
   const upcomingAssignments = assignmentsRes.rows as AssignmentItem[];
 
   return {
-    wakeUpTime,
+    wakeUpTime: suggestedWakeUp,
     todayClasses,
     upcomingAssignments,
   };
