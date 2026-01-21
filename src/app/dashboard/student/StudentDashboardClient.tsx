@@ -76,51 +76,39 @@ export default function StudentDashboardClient({
                 </header>
 
                 <main className="flex-1 overflow-y-auto px-5 md:px-10 py-8 space-y-10">
-                   <section className="space-y-1">
-    <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
-        {currentTimeGreeting}, {userName}
-    </h2>
-    <p className="text-gray-500 dark:text-gray-400">
-        Here’s what your day looks like
-    </p>
-</section>
+                    <section className="space-y-1">
+                        <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
+                            {currentTimeGreeting}, {userName}
+                        </h2>
+                        <p className="text-gray-500 dark:text-gray-400">
+                            Here’s what your day looks like
+                        </p>
+                    </section>
 
-                   
+
                     {/* Wake-Up Card */}
-                    <Card className="relative overflow-hidden border border-blue-200/50 dark:border-blue-900/40 bg-gradient-to-br from-white to-blue-50/40 dark:from-gray-900 dark:to-blue-950/20 shadow-sm">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-blue-700 dark:text-blue-400">
-                                <AlarmClockIcon className="w-5 h-5" />
-                                Smart Wake-Up Suggestion
-                            </CardTitle>
-                        </CardHeader>
+                    <section className="rounded-xl border border-gray-200/70 dark:border-gray-800/70 bg-white dark:bg-gray-900 p-6">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Suggested wake-up time
+                        </p>
 
-                        <CardContent className="space-y-2">
-                            {wakeUpTime ? (
-                                <>
-                                    <p className="text-4xl font-bold tracking-tight text-blue-700 dark:text-blue-400">
-                                        {wakeUpTime}
-                                    </p>
+                        <div className="mt-3 flex items-end gap-4">
+                            <p className="text-4xl font-semibold text-gray-900 dark:text-white">
+                                {wakeUpTime || "--:--"}
+                            </p>
 
-                                    {firstClass && (
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                                            For <span className="font-medium">{firstClass.name}</span> at {firstClass.start_time}
-                                        </p>
-                                    )}
-
-                                    <p className="text-xs text-gray-500">
-                                        Prep time: ~{totalPrepMinutes} mins
-                                    </p>
-
-                                    <Button size="sm" className="mt-3">
-                                        Set Alarm
-                                    </Button>
-                                </>
-                            ) : (
-                                <p className="text-gray-500">Calculating best wake-up time…</p>
+                            {firstClass && (
+                                <p className="text-sm text-gray-500">
+                                    for {firstClass.name} at {firstClass.start_time}
+                                </p>
                             )}
-                        </CardContent>
-                    </Card>
+                        </div>
+
+                        <p className="mt-2 text-xs text-gray-400">
+                            Includes prep and commute buffer
+                        </p>
+                    </section>
+
 
 
                     {/* Grid Cards */}
