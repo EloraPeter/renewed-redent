@@ -77,36 +77,41 @@ export default function StudentDashboardClient({
 
                 <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
                     {/* Wake-Up Card */}
-                    <Card className="relative overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                                <AlarmClockIcon className="w-5 h-5 text-blue-500" />
-                                Suggested Wake-Up
+                    <Card className="relative overflow-hidden border border-blue-200/50 dark:border-blue-900/40 bg-gradient-to-br from-white to-blue-50/40 dark:from-gray-900 dark:to-blue-950/20 shadow-sm">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                                <AlarmClockIcon className="w-5 h-5" />
+                                Smart Wake-Up Suggestion
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            {message ? (
-                                <p className="text-xl font-bold text-gray-600 dark:text-gray-300 animate-pulse">{message}</p>
-                            ) : wakeUpTime ? (
+
+                        <CardContent className="space-y-2">
+                            {wakeUpTime ? (
                                 <>
-                                    <p className="text-3xl font-bold text-blue-600">{wakeUpTime}</p>
+                                    <p className="text-4xl font-bold tracking-tight text-blue-700 dark:text-blue-400">
+                                        {wakeUpTime}
+                                    </p>
+
                                     {firstClass && (
-                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                            For {firstClass.name} at {firstClass.start_time}
-                                            {firstClass.location && ` (${firstClass.location})`}
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            For <span className="font-medium">{firstClass.name}</span> at {firstClass.start_time}
                                         </p>
                                     )}
-                                    <p className="text-sm text-gray-500 mt-2">
-                                        Total prep: ~{totalPrepMinutes} min (including commute & buffers)
+
+                                    <p className="text-xs text-gray-500">
+                                        Prep time: ~{totalPrepMinutes} mins
                                     </p>
-                                    <Button variant="outline" size="sm" className="mt-3">Set Alarm</Button>
+
+                                    <Button size="sm" className="mt-3">
+                                        Set Alarm
+                                    </Button>
                                 </>
                             ) : (
-                                <p className="text-xl text-gray-600">Loading wake-up...</p>
+                                <p className="text-gray-500">Calculating best wake-up time…</p>
                             )}
                         </CardContent>
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-blue-100/50 dark:bg-blue-900/30 rounded-bl-full" />
                     </Card>
+
 
                     {/* Grid Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
