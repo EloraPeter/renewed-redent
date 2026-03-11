@@ -110,10 +110,12 @@ export default function CoursesClient({
     ];
 
     return (
-        <div className="p-4 md:p-6 max-w-3xl mx-auto">
+        <div className="flex h-screen transition-colors">
             {/* Sidebar */}
             <Sidebar role="student" navItems={studentNavItems} />
 
+        <div className="p-4 md:p-6 max-w-3xl mx-auto">
+            
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <header className='flex items-center justify-between'>
@@ -354,6 +356,6 @@ export default function CoursesClient({
                     </div>
                 </div>
             )}
-        </div>
+        </div></div>
     );
 }
