@@ -50,8 +50,8 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <form onSubmit={handleSubmit} className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md space-y-6 w-96">
+    <div className="min-h-screen flex items-center justify-center ">
+      <form onSubmit={handleSubmit} className="p-8 bg-white/70 dark:bg-gray-900/70 backdrop-blur rounded-lg shadow-md space-y-6 w-96">
         <h1 className="text-2xl font-bold text-center">Log In to MochiDo</h1>
         <input
           name="email"

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import NotificationScheduler from "@/components/NotificationScheduler";
+import Link from "next/link";
 import { Menu, BookOpenIcon, CalendarIcon, FlameIcon, CoffeeIcon } from "lucide-react";
 
 type Props = {
@@ -99,20 +100,22 @@ export default function StudentDashboardClient({
                     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
                         {/* Upcoming Deadlines */}
-                        <div className="bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold text-pink-700 dark:text-pink-200 flex items-center gap-2">
-                                    <BookOpenIcon className="w-5 h-5" />
-                                    Upcoming Deadlines
-                                </h3>
-                                <span className="text-white bg-pink-500 rounded-full px-3 py-1 text-sm font-semibold">
-                                    {upcomingAssignments.length}
-                                </span>
+                        <Link href="/assignments" passHref>
+                            <div className="bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-lg font-bold text-pink-700 dark:text-pink-200 flex items-center gap-2">
+                                        <BookOpenIcon className="w-5 h-5" />
+                                        Upcoming Deadlines
+                                    </h3>
+                                    <span className="text-white bg-pink-500 rounded-full px-3 py-1 text-sm font-semibold">
+                                        {upcomingAssignments.length}
+                                    </span>
+                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    Don’t let anything slip!
+                                </p>
                             </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Don’t let anything slip!
-                            </p>
-                        </div>
+                        </Link>
 
                         {/* Today's Classes */}
                         <div className="bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
