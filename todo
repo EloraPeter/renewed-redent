@@ -282,3 +282,93 @@ You now have a complete, fully local, TypeScript-based roadmap using Next.js App
 No external services required – everything runs on your machine.
 
 Go build MochiDo and blow your supervisor away with that emotional hamster magic! 🐹✨
+
+
+
+Target mini-LMS MVP (Google Classroom flavor — focused edition)
+Database changes needed
+Add/alter tables:
+SQL-- Update assignments table (remove user_id from being the creator — now it's the student who submits)
+ALTER TABLE assignments
+  DROP COLUMN user_id,               -- was creator, now wrong
+  ADD COLUMN creator_id UUID REFERENCES profiles(id) ON DELETE SET NULL,  -- lecturer who created it
+  ADD COLUMN max_points INTEGER DEFAULT 100,
+  ADD COLUMN description TEXT,
+  ADD COLUMN attachment_url TEXT;    -- optional file from lecturer
+
+-- New submission table (one per student per assignment)
+CREATE TABLE submissions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  assignment_id UUID REFERENCES assignments(id) ON DELETE CASCADE,
+  student_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  submitted_at TIMESTAMPTZ,
+  file_url TEXT,
+  text_note TEXT,
+  score INTEGER CHECK (score >= 0),
+  feedback TEXT,
+  graded_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(assignment_id, student_id)  -- one submission per student
+);
+
+-- Optional: add status enum if you want more granularity
+ALTER TABLE assignments ADD COLUMN status TEXT DEFAULT 'open' CHECK (status IN ('open','closed','archived'));
+Key Flows
+
+Lecturer
+Goes to /dashboard/lecturer/classes/[courseId]/assignments
+Create assignment → title, desc, due date/time, max points, optional file
+List of created assignments per course
+Click assignment → see list of enrolled students + submission status
+Submitted: show file link, note, timestamp
+Not submitted: "Pending"
+
+Grade: input score + feedback → updates submissions row
+
+Student
+/dashboard/student/assignments shows all assignments from courses they're enrolled in
+(not just ones they created)
+Columns: Course, Title, Due, Status (Not submitted / Submitted / Graded), Score (if graded)
+Click → detail page
+See description + lecturer attachment
+Submit / resubmit form (file + note)
+If already graded → show score + feedback (read-only)
+If past due + not submitted → "Overdue" badge
+
+
+Mochi Integration points
+Student dashboard: show "3 assignments need attention" → Mochi worried face
+After submit: "Submitted 4 hours early! Amazing! 🐹🎉" → victory animation
+After graded: "You got 92/100 — great job!" or "17/100 … let's review together 💪"
+1-hour-before-deadline reminder notification + Mochi "Hurry up!" face
+
+
+Realistic Next Steps (prioritized)
+Phase 1 – Foundation (2–4 days effort)
+Do these first — they unlock everything else.
+
+Fix enrollment model (many-to-many)SQLCREATE TABLE enrollments (
+  student_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+  enrolled_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (student_id, course_id)
+);→ Lecturers can see who is enrolled, students see only assignments from enrolled courses.
+Redesign assignments table as above (lecturer-owned, class-wide).
+Create new submissions table.
+Lecturer: basic "Create assignment" form per course.
+
+Phase 2 – Core Loop (another 4–7 days)
+
+Student assignments list: query based on enrolled courses.
+Student submission form + resubmit logic (update existing row or create if none).
+Lecturer grading interface (list submissions → score + feedback form).
+
+Phase 3 – Polish & Mochi (3–5 days)
+
+Status badges, overdue highlighting, score display.
+Mochi emotion triggers on:
+submission event
+grading event (via polling or just on page load)
+nearing deadlines (already in NotificationScheduler)
+
+Notifications: 24h & 1h before deadline (per assignment).
