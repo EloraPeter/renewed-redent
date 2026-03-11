@@ -46,3 +46,14 @@ h4 {
 p {
   line-height: 1.65;
 }
+
+/* Hide scrollbars but keep scrolling */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}

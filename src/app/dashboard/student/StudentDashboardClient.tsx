@@ -44,7 +44,7 @@ export default function StudentDashboardClient({
     ];
 
     return (
-        <div className="flex h-screen bg-gradient-to-br from-pink-50 to-blue-50 dark:from-gray-950 dark:to-gray-900 transition-colors">
+        <div className="flex h-screen transition-colors">
             {/* Sidebar */}
             <Sidebar role="student" navItems={studentNavItems} />
 
@@ -52,10 +52,10 @@ export default function StudentDashboardClient({
             <div className="flex-1 flex flex-col overflow-hidden">
 
                 {/* Header */}
-                <header className="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between">
+                <header className="sticky top-0 z-20  backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between">
                     <button
                         id="menu-toggle"
-                        className="md:hidden text-gray-900 dark:text-gray-100 hover:text-pink-500 transition"
+                        className="md:hidden pr-4 text-gray-900 dark:text-gray-100 hover:text-pink-500 transition"
                     >
                         <Menu size={24} />
                     </button>
@@ -71,7 +71,7 @@ export default function StudentDashboardClient({
                 </header>
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-y-auto scrollbar-hide p-6 md:p-10 space-y-10">
+                <main className="flex-1 overflow-y-auto scrollbar-hide p-6  space-y-10">
 
                     {/* Wake-Up Suggestion */}
                     <section className="bg-white dark:bg-gray-800 rounded-3xl p-6 flex flex-col gap-4 border border-gray-200 dark:border-gray-700 transform hover:scale-105 transition-all duration-300">
