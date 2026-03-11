@@ -13,7 +13,7 @@ const fadeUp = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen text-black dark:text-gray-100 overflow-x-hidden">
+    <div className="min-h-screen text-gray-900 dark:text-gray-100 overflow-x-hidden">
 
       {/* ───────── HERO ───────── */}
       <section className="relative max-w-7xl mx-auto px-5 pt-16 pb-20 md:pt-24 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
