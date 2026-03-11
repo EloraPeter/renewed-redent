@@ -94,6 +94,7 @@ export default function SettingsClient({ initialUser, role }: Props) {
     <div className="space-y-8">
       {/* Profile Card */}
       <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+       
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <User className="text-pink-600" size={22} />
@@ -123,6 +124,7 @@ export default function SettingsClient({ initialUser, role }: Props) {
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold">Preferences</h2>
         </div>
+       
         <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {/* Dark Mode */}
           <div className="p-6 flex items-center justify-between">
