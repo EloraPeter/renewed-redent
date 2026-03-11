@@ -111,22 +111,22 @@ export default function CoursesClient({
 
     return (
         <div className="p-4 md:p-6 max-w-3xl mx-auto">
-             {/* Sidebar */}
-                <Sidebar role="student" navItems={studentNavItems} />
+            {/* Sidebar */}
+            <Sidebar role="student" navItems={studentNavItems} />
 
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-               
-                <button
-                    id="menu-toggle"
-                    className="md:hidden pr-4 text-gray-900 dark:text-gray-100 hover:text-pink-500 transition"
-                >
-                    <Menu size={24} />
-                </button>
+                <header className='flex items-center justify-between'>
+                    <button
+                        id="menu-toggle"
+                        className="md:hidden pr-4 text-gray-900 dark:text-gray-100 hover:text-pink-500 transition"
+                    >
+                        <Menu size={24} />
+                    </button>
 
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-                    My Courses
-                </h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        My Courses
+                    </h1></header>
                 <button
                     onClick={() => setIsAddOpen(true)}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg flex items-center gap-2 shadow-md transition w-full sm:w-auto"
