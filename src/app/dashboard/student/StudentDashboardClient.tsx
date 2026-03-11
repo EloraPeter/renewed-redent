@@ -13,7 +13,7 @@ type Props = {
     totalPrepMinutes: number;
     todayClasses: any[];
     upcomingAssignments: any[];
-    message?: string; 
+    message?: string;
 
 };
 
@@ -118,25 +118,27 @@ export default function StudentDashboardClient({
                         </Link>
 
                         {/* Today's Classes */}
-                        <div className="bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
-                            <h3 className="text-lg font-bold text-purple-700 dark:text-purple-200 flex items-center gap-2">
-                                <CalendarIcon className="w-5 h-5" />
-                                Today's Classes
-                            </h3>
-                            <p className="text-gray-700 dark:text-gray-300 font-medium">
-                                {todayClasses.length === 0 ? "No classes today" : `${todayClasses.length} scheduled`}
-                            </p>
-                            {todayClasses.length > 0 && (
-                                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                                    {todayClasses.slice(0, 3).map((cls, i) => (
-                                        <li key={i} className="hover:text-purple-500 dark:hover:text-purple-300 transition">
-                                            {cls.name} at {cls.start_time}
-                                        </li>
-                                    ))}
-                                    {todayClasses.length > 3 && <li className="text-gray-400">...and {todayClasses.length - 3} more</li>}
-                                </ul>
-                            )}
-                        </div>
+                        <Link href="/dashboard/student/classes" passHref>
+                            <div className="bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
+                                <h3 className="text-lg font-bold text-purple-700 dark:text-purple-200 flex items-center gap-2">
+                                    <CalendarIcon className="w-5 h-5" />
+                                    Today's Classes
+                                </h3>
+                                <p className="text-gray-700 dark:text-gray-300 font-medium">
+                                    {todayClasses.length === 0 ? "No classes today" : `${todayClasses.length} scheduled`}
+                                </p>
+                                {todayClasses.length > 0 && (
+                                    <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                        {todayClasses.slice(0, 3).map((cls, i) => (
+                                            <li key={i} className="hover:text-purple-500 dark:hover:text-purple-300 transition">
+                                                {cls.name} at {cls.start_time}
+                                            </li>
+                                        ))}
+                                        {todayClasses.length > 3 && <li className="text-gray-400">...and {todayClasses.length - 3} more</li>}
+                                    </ul>
+                                )}
+                            </div>
+                        </Link>
 
                         {/* Streak */}
                         <div className="bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">

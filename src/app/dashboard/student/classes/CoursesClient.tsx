@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Plus, X, Edit, Trash2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import Sidebar from "@/components/Sidebar";
 import toast from 'react-hot-toast';
 
 interface Course {
@@ -98,10 +99,21 @@ export default function CoursesClient({
         }
     };
 
+    const studentNavItems = [
+        { href: "/dashboard/student", label: "Dashboard", icon: "Home" },
+        { href: "/dashboard/student/classes", label: "Classes", icon: "Calendar" },
+        { href: "/dashboard/student/assignments", label: "Assignments", icon: "BookOpen" },
+        { href: "/dashboard/student/routines", label: "Routines", icon: "Clock" },
+        { href: "/dashboard/settings", label: "Settings", icon: "Settings" },
+    ];
+
     return (
         <div className="p-4 md:p-6 max-w-3xl mx-auto">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                {/* Sidebar */}
+                <Sidebar role="student" navItems={studentNavItems} />
+                
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
                     My Courses
                 </h1>
