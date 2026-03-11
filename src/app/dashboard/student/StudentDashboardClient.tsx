@@ -13,7 +13,7 @@ type Props = {
     totalPrepMinutes: number;
     todayClasses: any[];
     upcomingAssignments: any[];
-    message?: string; // ← add this line
+    message?: string; 
 
 };
 
