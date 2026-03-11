@@ -71,7 +71,7 @@ export default function StudentDashboardClient({
                 </header>
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-y-auto p-6 md:p-10 space-y-10">
+                <main className="flex-1 overflow-y-auto scrollbar-hide p-6 md:p-10 space-y-10">
 
                     {/* Wake-Up Suggestion */}
                     <section className="bg-white dark:bg-gray-800 rounded-3xl p-6 flex flex-col gap-4 border border-gray-200 dark:border-gray-700 transform hover:scale-105 transition-all duration-300">
@@ -100,7 +100,7 @@ export default function StudentDashboardClient({
                     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
                         {/* Upcoming Deadlines */}
-                        <Link href="/assignments" passHref>
+                        <Link href="/dashboard/student/assignments" passHref>
                             <div className="bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-lg font-bold text-pink-700 dark:text-pink-200 flex items-center gap-2">
