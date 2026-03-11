@@ -13,7 +13,7 @@ const fadeUp = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen text-gray-900 dark:text-gray-100 overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden">
 
       {/* ───────── HERO ───────── */}
       <section className="relative max-w-7xl mx-auto px-5 pt-16 pb-20 md:pt-24 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
@@ -38,7 +38,7 @@ export default function Home() {
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 max-w-xl">
+          <p className="text-base sm:text-lg text-gray-800 dark:text-gray-300 max-w-xl">
             MochiDo is a gentle but powerful academic reminder system for students
             and lecturers — combining smart scheduling, emotional motivation,
             and adorable accountability.
