@@ -5,6 +5,8 @@ import { Plus, X, Edit, Trash2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Sidebar from "@/components/Sidebar";
 import toast from 'react-hot-toast';
+import { Menu, BookOpenIcon, CalendarIcon, FlameIcon, CoffeeIcon } from "lucide-react";
+
 
 interface Course {
     id: string;
@@ -109,11 +111,19 @@ export default function CoursesClient({
 
     return (
         <div className="p-4 md:p-6 max-w-3xl mx-auto">
+             {/* Sidebar */}
+                <Sidebar role="student" navItems={studentNavItems} />
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                {/* Sidebar */}
-                <Sidebar role="student" navItems={studentNavItems} />
-                
+               
+                <button
+                    id="menu-toggle"
+                    className="md:hidden pr-4 text-gray-900 dark:text-gray-100 hover:text-pink-500 transition"
+                >
+                    <Menu size={24} />
+                </button>
+
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
                     My Courses
                 </h1>
