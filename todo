@@ -1,0 +1,284 @@
+### Project Setup & Foundations
+
+- [ ] **Create the project with TypeScript**  
+      Run:
+
+  ```bash
+  npx create-next-app@latest .
+  ```
+
+  → Choose: **Yes** for TypeScript → App Router → **No** Tailwind → **Yes** src/ directory → **Yes** ESLint → Default for everything else.  
+  This gives you a clean Next.js 14+ App Router project with TypeScript.
+
+- [ ] **Install core dependencies**
+
+  ```bash
+  npm install date-fns react-icons lucide-react lottie-react react-hot-toast bcryptjs jsonwebtoken pg
+  npm install -D @types/bcryptjs @types/jsonwebtoken
+  ```
+
+- [ ] **Set up local PostgreSQL database**
+
+  1. Install PostgreSQL locally (or use Docker: `docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=password postgres`).
+  2. Create a database: `createdb mochido`.
+  3. Add connection string to `.env.local`:
+     ```
+     DATABASE_URL=postgres://postgres:password@localhost:5432/mochido
+     ```
+
+- [ ] **Create database connection utility**  
+      Create `src/lib/db.ts` – a singleton Pool for server-side queries:
+
+  ```ts
+  import { Pool } from "pg";
+
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
+
+  export default pool;
+  ```
+
+- [ ] **Create all database tables manually**  
+      Run these SQL commands in psql or your favorite client:
+
+  ```sql
+  CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+  CREATE TABLE profiles (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT CHECK (role IN ('student', 'lecturer')) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+
+  CREATE TABLE courses (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    day TEXT NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    location TEXT
+  );
+
+  CREATE TABLE assignments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    due_date TIMESTAMPTZ NOT NULL,
+    priority TEXT CHECK (priority IN ('low', 'medium', 'high')),
+    status TEXT DEFAULT 'pending',
+    file_url TEXT,
+    submitted_at TIMESTAMPTZ
+  );
+
+  CREATE TABLE routines (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    time TIME NOT NULL
+  );
+  ```
+
+- [ ] **Set up local file storage**  
+      Since everything must be fully local:  
+      Create a folder `public/uploads/assignments` for assignment files.  
+      We'll store files on the server's filesystem and serve them statically from `/uploads/assignments`.
+
+- [ ] **Add PWA basics**
+
+  1. Create `public/manifest.json` with basic manifest.
+  2. Add multiple sizes of Mochi icons (192×192, 512×512) to `public/icons/`.
+  3. Add `<link rel="manifest" href="/manifest.json" />` and meta tags in `src/app/layout.tsx`.
+
+- [ ] **Create simple service worker**  
+      Create `public/sw.js` that caches the app shell for offline support.
+
+### Authentication & Protection
+
+- [ ] **Install and configure NextAuth.js with custom credentials**
+
+  ```bash
+  npm install next-auth
+  ```
+
+- [ ] **Set up NextAuth route**  
+      Create `src/app/api/auth/[...nextauth]/route.ts` using Credentials provider:
+
+  - On signup: hash password with bcryptjs, insert into `profiles`.
+  - On login: verify password, return user with role.
+  - Add role to session callback.
+
+- [ ] **Create Session Provider**  
+      Wrap your app in `src/app/layout.tsx` with `SessionProvider` from `next-auth/react`.
+
+- [ ] **Create pages**
+
+  - `src/app/login/page.tsx`
+  - `src/app/signup/page.tsx`
+  - `src/app/role-select/page.tsx` (shown only if role is null)
+
+- [ ] **Implement role selection**  
+      After first signup/login, if `role` is null → redirect to role selection → update DB → irreversible.
+
+- [ ] **Route protection with Middleware**  
+      Create `middleware.ts` in project root:
+
+  - Protect all `/dashboard/*` routes.
+  - Redirect unauthenticated to `/login`.
+  - Block students from `/dashboard/lecturer/*` and vice-versa based on session.role.
+
+- [ ] **Add logout button**  
+      Use `signOut()` from `next-auth/react`.
+
+### UI & Styling
+
+- [ ] **Implement global CSS variables + dark mode**  
+      Use `localStorage` and `class="dark"` on `<html>` via `useEffect`.
+
+- [ ] **Create DarkModeToggle component**
+
+- [ ] **Make everything mobile-first responsive** (test on ≤480px)
+
+- [ ] **Replace all icons with Lucide React icons**
+
+- [ ] **Add loading skeletons/spinners** wherever data is fetched
+
+- [ ] **Add toast notifications**  
+      Use `react-hot-toast` for success/error messages.
+
+### Core Features – Student Side
+
+- [ ] **Split dashboard**
+
+  - Student dashboard: `src/app/dashboard/student/page.tsx`
+  - Use Server Components or Server Actions for data fetching.
+
+- [ ] **Implement Add/Edit/Delete for Courses, Assignments, Routines**  
+      All operations must filter by `user_id = currentUser.id` in queries.
+
+- [ ] **File upload for assignments (local storage)**
+
+  - Use form with `enctype="multipart/form-data"` in a Server Action.
+  - Save file to `public/uploads/assignments/[unique-filename]`.
+  - Store path as `/uploads/assignments/filename.ext` in DB.
+
+- [ ] **Priority color coding + circular progress ring**
+
+- [ ] **Routine editor + smart wake-up calculation** (keep in `src/lib/utils.ts`)
+
+- [ ] **Show today’s calculated wake-up time**
+
+- [ ] **Implement browser notifications**
+
+  - Request permission on first login.
+  - Simulate sequential morning alerts using Notification API + setTimeout.
+
+- [ ] **Fallback to alert() if permission denied**
+
+- [ ] **Add .ics calendar export button** (client-side generation)
+
+- [ ] **Weekly summary** (trigger manually with a button for demo)
+
+### Core Features – Lecturer Side
+
+- [ ] **Create lecturer dashboard** → `src/app/dashboard/lecturer/page.tsx`
+
+- [ ] **Show weekly & daily class overview** (query own courses)
+
+- [ ] **Daily class reminders** (use same Notification API)
+
+- [ ] **Aggregated assignment stats per class**  
+      Write SQL to calculate % submitted on time (no individual student data).
+
+- [ ] **Calendar .ics export** for lecturer schedule
+
+- [ ] **Calm Mochi version** (only happy/celebratory animations)
+
+### Mochi the Hamster – Mascot System
+
+- [ ] **Design or source 8–10 Mochi emotional states** (Lottie JSON files)
+
+- [ ] **Place Lottie files** in `public/lottie/`
+
+- [ ] **Install lottie-react** (already done)
+
+- [ ] **Create `src/components/Mochi.tsx`**  
+      Reactive component that reads app state (deadlines, completions, role) and picks correct animation.
+
+- [ ] **Show Mochi on both dashboards** (floating bottom-right or centered in empty states)
+
+- [ ] **Implement emotional logic** (full for students, limited for lecturers)
+
+- [ ] **Add streak animation**
+
+- [ ] **Use Mochi icon variants for push notification icons**
+
+- [ ] **Implement dynamic PWA icons** (different manifest per streak – advanced but cool)
+
+- [ ] **Mochi in empty states & notification permission screen**
+
+- [ ] **Add “Minimal Mochi” toggle** in settings (important for lecturers)
+
+### Advanced / Polish
+
+- [ ] **Pull-to-refresh** on dashboard (client-side)
+
+- [ ] **Instant UI updates** when marking assignment submitted
+
+- [ ] **Empty state components** for all lists
+
+- [ ] **Create custom 404 page** → `src/app/not-found.tsx`
+
+- [ ] **Create loading page** → `src/app/loading.tsx`
+
+- [ ] **Add basic error boundaries**
+
+### Notifications
+
+- [ ] **Implement Browser Notification API + setTimeout reminders**  
+      (Fully local – no external service needed)
+
+### Testing & Final Checks
+
+- [ ] **Test entire flow on real phone** (iOS + Android)
+
+- [ ] **Verify role protection** (trying wrong dashboard URL → redirect)
+
+- [ ] **Test offline mode** (PWA cache works)
+
+- [ ] **Test “Add to Home Screen”** install prompt
+
+- [ ] **Test Mochi animations** on low-end devices
+
+- [ ] **Verify dynamic icons** (if implemented)
+
+- [ ] **Run Lighthouse** → aim for ≥90 in all categories
+
+- [ ] **Fix all console errors & remove console.log**
+
+### Documentation & Submission
+
+- [ ] **Write comprehensive README.md**  
+      Include: local setup steps, env example, database schema, screenshots of Mochi states, student/lecturer views.
+
+- [ ] **No live Vercel URL needed** (fully local) – instead include detailed setup instructions and screenshots.
+
+- [ ] **Include database schema screenshot** or SQL dump.
+
+- [ ] **Record 2–3 minute demo video** showing:
+
+  - Signup → role selection
+  - Student flow: deadline → Mochi crying → complete → victory Mochi
+  - Lecturer dashboard with aggregated stats + calm Mochi
+
+- [ ] **Final git commit & backup**
+
+You now have a complete, fully local, TypeScript-based roadmap using Next.js App Router, raw PostgreSQL, local file storage, and NextAuth for authentication.
+
+No external services required – everything runs on your machine.
+
+Go build MochiDo and blow your supervisor away with that emotional hamster magic! 🐹✨
