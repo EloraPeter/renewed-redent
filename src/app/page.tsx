@@ -28,7 +28,7 @@ export default function Home() {
           transition={{ duration: 0.6 }}
           className="space-y-6 z-10"
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
+          <h1 className="text-4xl text-black dark:text-gray-100 sm:text-5xl lg:text-6xl font-extrabold leading-tight">
             Stay consistent.
             <br />
             Stay motivated.
