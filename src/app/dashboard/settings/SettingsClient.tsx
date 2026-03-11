@@ -226,7 +226,7 @@ export default function SettingsClient({ initialUser, role }: Props) {
       </section>
 
       <p className="text-center text-sm text-gray-500 dark:text-gray-600 mt-12">
-        MochiDo • Port Harcourt vibes 🐹 • {new Date().getFullYear()}
+        MochiDo 🐹 • {new Date().getFullYear()}
       </p>
     </div>
   );

@@ -20,7 +20,7 @@ export default async function SettingsPage() {
     SELECT 
       email, 
       role,
-      COALESCE(display_name, email) as display_name
+      COALESCE(name, email) as display_name
     FROM profiles 
     WHERE id = $1
     `,
