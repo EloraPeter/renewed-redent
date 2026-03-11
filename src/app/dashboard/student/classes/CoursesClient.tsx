@@ -114,7 +114,7 @@ export default function CoursesClient({
             {/* Sidebar */}
             <Sidebar role="student" navItems={studentNavItems} />
 
-            <div className="p-4 md:p-6 max-w-3xl mx-auto">
+            <div className="p-4 md:p-6 max-w-3xl mx-auto w-full">
 
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
