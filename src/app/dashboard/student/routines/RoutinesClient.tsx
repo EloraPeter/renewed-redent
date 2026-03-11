@@ -3,7 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Routine } from '@/types/routine';
 import { Trash2, Edit, Plus, X } from 'lucide-react';
+import Sidebar from "@/components/Sidebar";
 import toast from 'react-hot-toast';
+import { Menu, BookOpenIcon, CalendarIcon, FlameIcon, CoffeeIcon } from "lucide-react";
+
 
 interface RoutinesClientProps {
     routines: Routine[];
@@ -74,294 +77,317 @@ export default function RoutinesClient({
             setEditingRoutine(null);
         }
     };
+    const studentNavItems = [
+        { href: "/dashboard/student", label: "Dashboard", icon: "Home" },
+        { href: "/dashboard/student/classes", label: "Classes", icon: "Calendar" },
+        { href: "/dashboard/student/assignments", label: "Assignments", icon: "BookOpen" },
+        { href: "/dashboard/student/routines", label: "Routines", icon: "Clock" },
+        { href: "/dashboard/settings", label: "Settings", icon: "Settings" },
+    ];
 
     return (
-        <div className="p-4 md:p-6 max-w-3xl mx-auto">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-                    My Routines
-                </h1>
+        <div className="flex h-screen transition-colors">
+            {/* Sidebar */}
+            <Sidebar role="student" navItems={studentNavItems} />
+
+            <div className="p-4 md:p-6 max-w-3xl mx-auto w-full">
+                {/* Header */}
+                <header className="sticky top-0 z-20  backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between">
+                    <button
+                        id="menu-toggle"
+                        className="md:hidden pr-4 text-gray-900 dark:text-gray-100 hover:text-pink-500 transition"
+                    >
+                        <Menu size={24} />
+                    </button>
+                    {/* <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"> */}
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        My Routines
+                    </h1>
+                    {/* </div> */}
+                </header>
                 <button
                     onClick={() => setIsAddOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg flex items-center gap-2 shadow-md transition w-full sm:w-auto"
+                    className="bg-blue-600 hover:bg-blue-700 mb-4 text-white px-5 py-3 rounded-lg flex items-center gap-2 shadow-md transition w-full sm:w-auto"
                 >
                     <Plus size={20} /> Add Routine
                 </button>
-            </div>
-
-            {/* List */}
-            {routines.length === 0 ? (
-                <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow">
-                    <p className="text-lg text-gray-500 dark:text-gray-400">No routines yet...</p>
-                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                        Add daily habits, weekly classes, or one-off appointments!
-                    </p>
-                </div>
-            ) : (
-                <ul className="space-y-4">
-                    {routines.map((r) => (
-                        <li
-                            key={r.id}
-                            className="bg-white dark:bg-gray-800 p-4 md:p-5 rounded-xl shadow flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
-                        >
-                            <div className="flex-1">
-                                <div className="font-semibold text-lg">{r.title}</div>
-                                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 flex flex-wrap gap-2">
-                                    {r.duration_minutes && <span>• {r.duration_minutes} min</span>}
-                                    {r.schedule_type === 'weekly' && r.days && r.days.length > 0 && (
-                                        <span>• {r.days.map((d) => d.slice(0, 3)).join(', ')}</span>
-                                    )}
-                                    {r.schedule_type === 'once' && r.once_date && (
-                                        <span>• {new Date(r.once_date).toLocaleDateString('en-GB')}</span>
-                                    )}
-                                    {r.affects_wake_up && (
-                                        <span className="text-blue-600 font-medium">• Affects wake-up</span>
-                                    )}
-                                </div>
-
-                            </div>
-
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => {
-                                        setEditingRoutine(r);
-                                        // useEffect will handle the rest
-                                    }}
-                                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-500"
-                                    aria-label="Edit routine"
-                                >
-                                    <Edit size={20} />
-                                </button>
-                                <button
-                                    onClick={async () => {
-                                        if (confirm('Delete this routine?')) {
-                                            await onDelete(r.id);
-                                            toast.success('Routine deleted');
-                                        }
-                                    }}
-                                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
-                                    aria-label="Delete routine"
-                                >
-                                    <Trash2 size={20} />
-                                </button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
-
-            {/* Add Modal – remains mostly the same */}
-            {isAddOpen && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-lg">
-                        <div className="flex justify-between items-center mb-5">
-                            <h2 className="text-xl md:text-2xl font-bold">Add Routine</h2>
-                            <button onClick={() => setIsAddOpen(false)}>
-                                <X size={28} />
-                            </button>
-                        </div>
-
-                        <form ref={addFormRef} onSubmit={handleAddSubmit} className="space-y-5">
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5">Title</label>
-                                <input name="title" required placeholder="Gym • Lecture • Prayer" className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
-                            </div>
 
 
 
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5">Repeats</label>
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                    {['daily', 'weekly', 'once'].map((value) => (
-                                        <label
-                                            key={value}
-                                            className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer transition text-center ${addType === value
-                                                ? 'bg-blue-100 dark:bg-blue-900 border-blue-500 font-medium'
-                                                : 'hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
-                                                }`}
-                                        >
-                                            <input
-                                                type="radio"
-                                                name="schedule_type"
-                                                value={value}
-                                                checked={addType === value}
-                                                onChange={() => setAddType(value as any)}
-                                                className="sr-only"
-                                            />
-                                            {value === 'daily' ? 'Every day' : value === 'weekly' ? 'Specific days' : 'One time only'}
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {addType === 'weekly' && (
-                                <div>
-                                    <label className="block text-sm font-medium mb-1.5">Select days</label>
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                        {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-                                            <label key={day} className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                                                <input type="checkbox" name="days" value={day} className="rounded" />
-                                                <span className="capitalize text-sm">{day}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {addType === 'once' && (
-                                <div>
-                                    <label className="block text-sm font-medium mb-1.5">Date</label>
-                                    <input name="once_date" type="date" required className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
-                                </div>
-                            )}
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5">Duration (minutes, optional)</label>
-                                <input
-                                    name="duration_minutes"
-                                    type="number"
-                                    min="1"
-                                    placeholder="30"
-                                    className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5">Affects wake-up time?</label>
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="checkbox"
-                                        name="affects_wake_up"
-                                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                    />
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                                        Include this in morning prep / wake-up calculation
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end gap-4 mt-6">
-                                <button type="button" onClick={() => setIsAddOpen(false)} className="px-5 py-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-                                    Cancel
-                                </button>
-                                <button type="submit" className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                    Add Routine
-                                </button>
-                            </div>
-                        </form>
+                {/* List */}
+                {routines.length === 0 ? (
+                    <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow">
+                        <p className="text-lg text-gray-500 dark:text-gray-400">No routines yet...</p>
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                            Add daily habits, weekly classes, or one-off appointments!
+                        </p>
                     </div>
-                </div>
-            )}
-
-            {/* Edit Modal – now controlled + resets properly when type changes */}
-            {editingRoutine && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-lg">
-                        <div className="flex justify-between items-center mb-5">
-                            <h2 className="text-xl md:text-2xl font-bold">Edit Routine</h2>
-                            <button onClick={() => setEditingRoutine(null)}>
-                                <X size={28} />
-                            </button>
-                        </div>
-
-                        <form ref={editFormRef} onSubmit={handleEditSubmit} className="space-y-5">
-                            <input name="title" defaultValue={editingRoutine.title} required className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
-
-
-                            <select
-                                name="schedule_type"
-                                value={editType}                    // ← controlled
-                                onChange={(e) => {
-                                    const newType = e.target.value as 'daily' | 'weekly' | 'once';
-                                    setEditType(newType);
-                                    // Reset irrelevant fields
-                                    if (newType !== 'weekly') setEditDays([]);
-                                    if (newType !== 'once') setEditOnceDate('');
-                                }}
-                                className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                ) : (
+                    <ul className="space-y-4">
+                        {routines.map((r) => (
+                            <li
+                                key={r.id}
+                                className="bg-white dark:bg-gray-800 p-4 md:p-5 rounded-xl shadow flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
                             >
-                                <option value="daily">Every day</option>
-                                <option value="weekly">Specific days</option>
-                                <option value="once">One time only</option>
-                            </select>
+                                <div className="flex-1">
+                                    <div className="font-semibold text-lg">{r.title}</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 flex flex-wrap gap-2">
+                                        {r.duration_minutes && <span>• {r.duration_minutes} min</span>}
+                                        {r.schedule_type === 'weekly' && r.days && r.days.length > 0 && (
+                                            <span>• {r.days.map((d) => d.slice(0, 3)).join(', ')}</span>
+                                        )}
+                                        {r.schedule_type === 'once' && r.once_date && (
+                                            <span>• {new Date(r.once_date).toLocaleDateString('en-GB')}</span>
+                                        )}
+                                        {r.affects_wake_up && (
+                                            <span className="text-blue-600 font-medium">• Affects wake-up</span>
+                                        )}
+                                    </div>
 
-                            {editType === 'weekly' && (
+                                </div>
+
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => {
+                                            setEditingRoutine(r);
+                                            // useEffect will handle the rest
+                                        }}
+                                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-500"
+                                        aria-label="Edit routine"
+                                    >
+                                        <Edit size={20} />
+                                    </button>
+                                    <button
+                                        onClick={async () => {
+                                            if (confirm('Delete this routine?')) {
+                                                await onDelete(r.id);
+                                                toast.success('Routine deleted');
+                                            }
+                                        }}
+                                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
+                                        aria-label="Delete routine"
+                                    >
+                                        <Trash2 size={20} />
+                                    </button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+                {/* Add Modal – remains mostly the same */}
+                {isAddOpen && (
+                    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-lg">
+                            <div className="flex justify-between items-center mb-5">
+                                <h2 className="text-xl md:text-2xl font-bold">Add Routine</h2>
+                                <button onClick={() => setIsAddOpen(false)}>
+                                    <X size={28} />
+                                </button>
+                            </div>
+
+                            <form ref={addFormRef} onSubmit={handleAddSubmit} className="space-y-5">
                                 <div>
-                                    <label className="block text-sm font-medium mb-1.5">Select days</label>
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                        {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-                                            <label key={day} className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                                    <label className="block text-sm font-medium mb-1.5">Title</label>
+                                    <input name="title" required placeholder="Gym • Lecture • Prayer" className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
+                                </div>
+
+
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-1.5">Repeats</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        {['daily', 'weekly', 'once'].map((value) => (
+                                            <label
+                                                key={value}
+                                                className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer transition text-center ${addType === value
+                                                    ? 'bg-blue-100 dark:bg-blue-900 border-blue-500 font-medium'
+                                                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
+                                                    }`}
+                                            >
                                                 <input
-                                                    type="checkbox"
-                                                    name="days"
-                                                    value={day}
-                                                    checked={editDays.includes(day)}
-                                                    onChange={(e) => {
-                                                        if (e.target.checked) {
-                                                            setEditDays((prev) => [...prev, day]);
-                                                        } else {
-                                                            setEditDays((prev) => prev.filter((d) => d !== day));
-                                                        }
-                                                    }}
-                                                    className="rounded"
+                                                    type="radio"
+                                                    name="schedule_type"
+                                                    value={value}
+                                                    checked={addType === value}
+                                                    onChange={() => setAddType(value as any)}
+                                                    className="sr-only"
                                                 />
-                                                <span className="capitalize text-sm">{day}</span>
+                                                {value === 'daily' ? 'Every day' : value === 'weekly' ? 'Specific days' : 'One time only'}
                                             </label>
                                         ))}
                                     </div>
                                 </div>
-                            )}
 
-                            {editType === 'once' && (
+                                {addType === 'weekly' && (
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Select days</label>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                                                <label key={day} className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                                                    <input type="checkbox" name="days" value={day} className="rounded" />
+                                                    <span className="capitalize text-sm">{day}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {addType === 'once' && (
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Date</label>
+                                        <input name="once_date" type="date" required className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
+                                    </div>
+                                )}
+
                                 <div>
-                                    <label className="block text-sm font-medium mb-1.5">Date</label>
+                                    <label className="block text-sm font-medium mb-1.5">Duration (minutes, optional)</label>
                                     <input
-                                        name="once_date"
-                                        type="date"
-                                        value={editOnceDate}
-                                        onChange={(e) => setEditOnceDate(e.target.value)}
-                                        required
+                                        name="duration_minutes"
+                                        type="number"
+                                        min="1"
+                                        placeholder="30"
                                         className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                                     />
                                 </div>
-                            )}
-
-                            <input
-                                name="duration_minutes"
-                                type="number"
-                                defaultValue={editingRoutine.duration_minutes ?? ''}
-                                min="1"
-                                placeholder="Duration (minutes, optional)"
-                                className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
-                            />
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5">Affects wake-up time?</label>
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="checkbox"
-                                        name="affects_wake_up"
-                                        defaultChecked={editingRoutine.affects_wake_up}   // ← uses the current value
-                                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                    />
-                                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                                        Include this in morning prep / wake-up calculation
-                                    </span>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1.5">Affects wake-up time?</label>
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            name="affects_wake_up"
+                                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                                            Include this in morning prep / wake-up calculation
+                                        </span>
+                                    </div>
                                 </div>
+
+                                <div className="flex justify-end gap-4 mt-6">
+                                    <button type="button" onClick={() => setIsAddOpen(false)} className="px-5 py-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        Add Routine
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* Edit Modal – now controlled + resets properly when type changes */}
+                {editingRoutine && (
+                    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-lg">
+                            <div className="flex justify-between items-center mb-5">
+                                <h2 className="text-xl md:text-2xl font-bold">Edit Routine</h2>
+                                <button onClick={() => setEditingRoutine(null)}>
+                                    <X size={28} />
+                                </button>
                             </div>
 
-                            <div className="flex justify-end gap-4 mt-6">
-                                <button type="button" onClick={() => setEditingRoutine(null)} className="px-5 py-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-                                    Cancel
-                                </button>
-                                <button type="submit" className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                    Save Changes
-                                </button>
-                            </div>
-                        </form>
+                            <form ref={editFormRef} onSubmit={handleEditSubmit} className="space-y-5">
+                                <input name="title" defaultValue={editingRoutine.title} required className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
+
+
+                                <select
+                                    name="schedule_type"
+                                    value={editType}                    // ← controlled
+                                    onChange={(e) => {
+                                        const newType = e.target.value as 'daily' | 'weekly' | 'once';
+                                        setEditType(newType);
+                                        // Reset irrelevant fields
+                                        if (newType !== 'weekly') setEditDays([]);
+                                        if (newType !== 'once') setEditOnceDate('');
+                                    }}
+                                    className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                                >
+                                    <option value="daily">Every day</option>
+                                    <option value="weekly">Specific days</option>
+                                    <option value="once">One time only</option>
+                                </select>
+
+                                {editType === 'weekly' && (
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Select days</label>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                                                <label key={day} className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        name="days"
+                                                        value={day}
+                                                        checked={editDays.includes(day)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setEditDays((prev) => [...prev, day]);
+                                                            } else {
+                                                                setEditDays((prev) => prev.filter((d) => d !== day));
+                                                            }
+                                                        }}
+                                                        className="rounded"
+                                                    />
+                                                    <span className="capitalize text-sm">{day}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {editType === 'once' && (
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Date</label>
+                                        <input
+                                            name="once_date"
+                                            type="date"
+                                            value={editOnceDate}
+                                            onChange={(e) => setEditOnceDate(e.target.value)}
+                                            required
+                                            className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                    </div>
+                                )}
+
+                                <input
+                                    name="duration_minutes"
+                                    type="number"
+                                    defaultValue={editingRoutine.duration_minutes ?? ''}
+                                    min="1"
+                                    placeholder="Duration (minutes, optional)"
+                                    className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                                />
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-1.5">Affects wake-up time?</label>
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            name="affects_wake_up"
+                                            defaultChecked={editingRoutine.affects_wake_up}   // ← uses the current value
+                                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                                            Include this in morning prep / wake-up calculation
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-4 mt-6">
+                                    <button type="button" onClick={() => setEditingRoutine(null)} className="px-5 py-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
+
         </div>
     );
 }
