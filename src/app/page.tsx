@@ -16,7 +16,7 @@ export default function Home() {
     <div className="min-h-screen text-gray-900 dark:text-gray-100 overflow-x-hidden">
 
       {/* ───────── HERO ───────── */}
-      <section className="relative max-w-7xl mx-auto px-5 pt-16 pb-20 md:pt-24 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
+      <section className="relative max-w-7xl text-gray-900 dark:text-gray-100 mx-auto px-5 pt-16 pb-20 md:pt-24 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
 
         {/* Glow blob */}
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-400/20 blur-3xl rounded-full" />
@@ -38,7 +38,7 @@ export default function Home() {
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 max-w-xl">
+          <p className="text-base sm:text-lg text-gray-900 dark:text-gray-300 max-w-xl">
             MochiDo is a gentle but powerful academic reminder system for students
             and lecturers — combining smart scheduling, emotional motivation,
             and adorable accountability.
