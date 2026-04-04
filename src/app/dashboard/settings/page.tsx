@@ -18,7 +18,9 @@ export default async function SettingsPage() {
     SELECT 
       email, 
       role,
-      COALESCE(name, email) as display_name
+      COALESCE(name, email) as display_name,
+      late_penalty_percent,
+      grading_scale
     FROM profiles 
     WHERE id = $1
     `,
@@ -31,6 +33,8 @@ export default async function SettingsPage() {
         email: userEmail,
         role: session.user.role ?? "student",
         display_name: userEmail.split("@")[0],
+        late_penalty_percent: 5,
+        grading_scale: { A: 90, B: 80, C: 70, D: 60, F: 0 },
     };
 
     return (
@@ -43,13 +47,15 @@ export default async function SettingsPage() {
                         Settings
                     </h1>
                 </header>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-gray-600 dark:text-gray-400 mb-10">
                     Customize MochiDo the way you like it 🐹
                 </p>
 
                 <SettingsClient
                     initialUser={user}
                     role={user.role}
+                    latePenalty={user.late_penalty_percent ?? 5}
+                    gradingScale={user.grading_scale ?? { A: 90, B: 80, C: 70, D: 60, F: 0 }}
                 />
             </div>
         </div>
