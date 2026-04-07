@@ -112,20 +112,45 @@ export default function StudentDashboardClient({
                                     </span>
                                 </div>
 
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
                                     Don’t let anything slip!
                                 </p>
 
                                 {upcomingAssignments.length > 0 && (
-                                    <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1 mt-2">
-                                        {upcomingAssignments.slice(0, 3).map((assignment: any, i: number) => (
-                                            <li key={i} className="flex justify-between">
-                                                <span>{assignment.title}</span>
-                                                <span className="text-pink-600 text-xs">
-                                                    {new Date(assignment.due_date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' })}
-                                                </span>
-                                            </li>
-                                        ))}
+                                    <ul className="text-sm space-y-2 mt-3">
+                                        {upcomingAssignments.slice(0, 3).map((assignment: any, i: number) => {
+                                            const dueDate = new Date(assignment.due_date);
+                                            return (
+                                                <li key={i} className="flex justify-between items-center bg-white/70 dark:bg-gray-800/70 rounded-lg p-2">
+                                                    <div>
+                                                        <div className="font-medium text-gray-900 dark:text-white">
+                                                            {assignment.title}
+                                                        </div>
+                                                        {assignment.course_name && (
+                                                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                                                {assignment.course_name}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="text-right text-xs">
+                                                        <div className="font-mono text-pink-600 dark:text-pink-400">
+                                                            {dueDate.toLocaleDateString('en-GB', {
+                                                                month: 'short',
+                                                                day: 'numeric'
+                                                            })}
+                                                        </div>
+                                                        {assignment.priority && (
+                                                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${assignment.priority === 'high' ? 'bg-red-100 text-red-600' :
+                                                                assignment.priority === 'medium' ? 'bg-yellow-100 text-yellow-600' :
+                                                                    'bg-gray-100 text-gray-600'
+                                                                }`}>
+                                                                {assignment.priority}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 )}
                             </div>
@@ -138,17 +163,24 @@ export default function StudentDashboardClient({
                                     <CalendarIcon className="w-5 h-5" />
                                     Today's Classes
                                 </h3>
+
                                 <p className="text-gray-700 dark:text-gray-300 font-medium">
                                     {todayClasses.length === 0 ? "No classes today" : `${todayClasses.length} scheduled`}
                                 </p>
+
                                 {todayClasses.length > 0 && (
-                                    <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                                        {todayClasses.slice(0, 3).map((cls, i) => (
-                                            <li key={i} className="hover:text-purple-500 dark:hover:text-purple-300 transition">
-                                                {cls.name} at {cls.start_time}
+                                    <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1 mt-2">
+                                        {todayClasses.slice(0, 4).map((cls: any, i: number) => (
+                                            <li key={i} className="flex justify-between">
+                                                <span className="font-medium">{cls.name}</span>
+                                                <span className="font-mono text-purple-600 dark:text-purple-400">
+                                                    {cls.start_time}
+                                                </span>
                                             </li>
                                         ))}
-                                        {todayClasses.length > 3 && <li className="text-gray-400">...and {todayClasses.length - 3} more</li>}
+                                        {todayClasses.length > 4 && (
+                                            <li className="text-gray-400 text-xs">...and {todayClasses.length - 4} more</li>
+                                        )}
                                     </ul>
                                 )}
                             </div>
