@@ -54,9 +54,9 @@ export default function DarkModeToggle() {
   useEffect(() => {
     // Initialize theme from localStorage or system preference
     const theme = localStorage.getItem("theme");
-    const isDark = theme === "dark" || 
-                   (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    
+    const isDark = theme === "dark" ||
+      (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
     setDarkMode(isDark);
     document.documentElement.classList.toggle("dark", isDark);
   }, []);
@@ -69,7 +69,7 @@ export default function DarkModeToggle() {
 
     // Toggle class on html element
     document.documentElement.classList.toggle("dark", next);
-    
+
     // Save to localStorage
     localStorage.setItem("theme", next ? "dark" : "light");
   };
