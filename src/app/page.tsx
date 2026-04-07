@@ -3,8 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import mochihappy from "/Projects/My Websites/student-class-reminder/renewed-redent/public/mochi-happy.png";
-import mochistudy from "/Projects/My Websites/student-class-reminder/renewed-redent/public/mochi-study.png";
+// import mochihappy from "/Projects/My Websites/student-class-reminder/renewed-redent/public/mochi-happy.png";
+// import mochistudy from "/Projects/My Websites/student-class-reminder/renewed-redent/public/mochi-study.png";
+import mochihappy from "/mochi-happy.png";
+import mochistudy from "/mochi-study.png";
+
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
