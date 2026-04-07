@@ -8,9 +8,9 @@ import { X } from 'lucide-react';
 
 type Course = { id: string; name: string };
 
-export default function LecturerAddAssignmentForm({ 
-    courses, 
-    onClose 
+export default function LecturerAddAssignmentForm({
+    courses,
+    onClose
 }: {
     courses: Course[];
     onClose: () => void;
@@ -39,8 +39,8 @@ export default function LecturerAddAssignmentForm({
                     <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                         📋 New Assignment
                     </h2>
-                    <button 
-                        onClick={onClose} 
+                    <button
+                        onClick={onClose}
                         className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all"
                     >
                         <X size={24} />
@@ -64,9 +64,9 @@ export default function LecturerAddAssignmentForm({
                         <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">
                             Course *
                         </label>
-                        <select 
-                            name="courseId" 
-                            required 
+                        <select
+                            name="courseId"
+                            required
                             className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                             <option value="">Select course</option>
@@ -94,12 +94,13 @@ export default function LecturerAddAssignmentForm({
                             <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">
                                 Priority
                             </label>
-                            <select 
-                                name="priority" 
+                            <select
+                                name="priority"
+                                defaultValue="medium" 
                                 className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             >
                                 <option value="low">Low Priority</option>
-                                <option value="medium" selected>Medium Priority</option>
+                                <option value="medium">Medium Priority</option>  
                                 <option value="high">High Priority</option>
                             </select>
                         </div>
@@ -121,9 +122,9 @@ export default function LecturerAddAssignmentForm({
                         <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white flex items-center gap-2">
                             📎 Attachment (PDF, DOC, etc.)
                         </label>
-                        <input 
-                            type="file" 
-                            name="file" 
+                        <input
+                            type="file"
+                            name="file"
                             accept=".pdf,.doc,.docx,.zip"
                             className="w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl hover:border-blue-400 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-white"
                         />
