@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getStudentData } from "@/lib/data";
 import StudentDashboardClient from "./StudentDashboardClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function StudentDashboardPage() {
   const session = await getServerSession();
   if (!session?.user) redirect("/login");
