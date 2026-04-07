@@ -123,6 +123,7 @@ export async function getStudentData(userId: string) {
     message: wakeUpData.message || `Good ${todayWeekday === 'friday' ? 'Friday' : 'day'}, you have ${todayClasses.length} class(es) today!`,
     todayClasses,
     upcomingAssignments: assignmentsRes.rows as AssignmentItem[],
+    streak,
   };
 }
 
