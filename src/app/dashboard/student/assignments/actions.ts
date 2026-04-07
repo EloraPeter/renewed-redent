@@ -71,7 +71,7 @@ export async function markSubmitted(assignmentId: string, formData: FormData) {
     `,
     [fileUrl, assignmentId, session.user.id]
   );
-
+revalidatePath('/dashboard/student', 'page');
   revalidatePath("/dashboard/student/assignments");
   return { success: true };
 }
@@ -99,7 +99,7 @@ export async function deleteAssignment(assignmentId: string) {
     "DELETE FROM assignments WHERE id = $1 AND user_id = $2",
     [assignmentId, session.user.id]
   );
-
+revalidatePath('/dashboard/student', 'page');
   revalidatePath("/dashboard/student/assignments");
   return { success: true };
 }

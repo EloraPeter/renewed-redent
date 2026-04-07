@@ -63,7 +63,7 @@ export async function createCourse(formData: FormData) {
                 lecturer_name, lecturer_phone, course_rep_name, course_rep_phone]
         );
 
-        revalidatePath('/dashboard/student');
+        revalidatePath('/dashboard/student', 'page');
         revalidatePath('/dashboard/student/classes');
         return { success: true };
     } catch (err: any) {
@@ -123,7 +123,7 @@ export async function updateCourse(id: string, formData: FormData) {
             return { error: 'Course not found or not owned by you' };
         }
 
-        revalidatePath('/dashboard/student');
+revalidatePath('/dashboard/student', 'page');
         revalidatePath('/dashboard/student/classes');
         return { success: true };
     } catch (err: any) {
@@ -139,7 +139,7 @@ export async function deleteCourse(id: string) {
         [id, userId]
     );
     if (res.rowCount === 0) return { error: 'Not found or not yours' };
-    revalidatePath('/dashboard/student');
+    revalidatePath('/dashboard/student', 'page');
     revalidatePath('/dashboard/student/classes');
     return { success: true };
 }
