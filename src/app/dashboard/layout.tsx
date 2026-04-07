@@ -19,7 +19,7 @@ export default async function DashboardLayout({
 
   return (
     <DashboardClientWrapper>
-      <DarkModeToggle />
+      {/* <DarkModeToggle /> */}
 
       {children}
     </DashboardClientWrapper>

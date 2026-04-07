@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import NotificationScheduler from "@/components/NotificationScheduler";
 import Link from "next/link";
-import { Menu, BookOpenIcon, CalendarIcon, FlameIcon, CoffeeIcon } from "lucide-react";
+import {
+    Menu,
+    BookOpenIcon,
+    CalendarIcon,
+    FlameIcon,
+    CoffeeIcon,
+} from "lucide-react";
 
 type Props = {
     userName: string;
@@ -31,14 +37,22 @@ export default function StudentDashboardClient({
     useEffect(() => {
         const hour = new Date().getHours();
         setCurrentTimeGreeting(
-            hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
+            hour < 12
+                ? "Good morning"
+                : hour < 18
+                    ? "Good afternoon"
+                    : "Good evening",
         );
     }, []);
 
     const studentNavItems = [
         { href: "/dashboard/student", label: "Dashboard", icon: "Home" },
         { href: "/dashboard/student/classes", label: "Classes", icon: "Calendar" },
-        { href: "/dashboard/student/assignments", label: "Assignments", icon: "BookOpen" },
+        {
+            href: "/dashboard/student/assignments",
+            label: "Assignments",
+            icon: "BookOpen",
+        },
         { href: "/dashboard/student/routines", label: "Routines", icon: "Clock" },
         { href: "/dashboard/settings", label: "Settings", icon: "Settings" },
     ];
@@ -50,7 +64,6 @@ export default function StudentDashboardClient({
 
             {/* Main dashboard area */}
             <div className="flex-1 flex flex-col overflow-hidden">
-
                 {/* Header */}
                 <header className="sticky top-0 z-20  backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between">
                     <button
@@ -72,7 +85,6 @@ export default function StudentDashboardClient({
 
                 {/* Main Content */}
                 <main className="flex-1 overflow-y-auto scrollbar-hide p-6  space-y-10">
-
                     {/* Wake-Up Suggestion */}
                     <section className="bg-white dark:bg-gray-800 rounded-3xl p-6 flex flex-col gap-4 border border-gray-200 dark:border-gray-700 transform hover:scale-105 transition-all duration-300">
                         <div className="flex items-center justify-between">
@@ -92,7 +104,8 @@ export default function StudentDashboardClient({
                             </p>
                             {firstClass && (
                                 <p className="text-gray-600 dark:text-gray-400 text-lg">
-                                    for <span className="font-semibold">{firstClass.name}</span> at {firstClass.start_time}
+                                    for <span className="font-semibold">{firstClass.name}</span>{" "}
+                                    at {firstClass.start_time}
                                 </p>
                             )}
                         </div>
@@ -100,7 +113,6 @@ export default function StudentDashboardClient({
 
                     {/* Stats */}
                     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
                         {/* Upcoming Deadlines */}
                         <Link href="/dashboard/student/assignments" passHref>
                             <div className="bg-gradient-to-r from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 rounded-3xl p-6 flex flex-col gap-3 hover:scale-105 transition-transform cursor-pointer shadow-sm">
@@ -120,39 +132,48 @@ export default function StudentDashboardClient({
 
                                 {upcomingAssignments.length > 0 && (
                                     <ul className="text-sm space-y-2 mt-3">
-                                        {upcomingAssignments.slice(0, 3).map((assignment: any, i: number) => {
-                                            const dueDate = new Date(assignment.due_date);
-                                            return (
-                                                <li key={i} className="flex justify-between items-center bg-white/70 dark:bg-gray-800/70 rounded-lg p-2">
-                                                    <div>
-                                                        <div className="font-medium text-gray-900 dark:text-white">
-                                                            {assignment.title}
-                                                        </div>
-                                                        {assignment.course_name && (
-                                                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                                                                {assignment.course_name}
+                                        {upcomingAssignments
+                                            .slice(0, 3)
+                                            .map((assignment: any, i: number) => {
+                                                const dueDate = new Date(assignment.due_date);
+                                                return (
+                                                    <li
+                                                        key={i}
+                                                        className="flex justify-between items-center bg-white/70 dark:bg-gray-800/70 rounded-lg p-2"
+                                                    >
+                                                        <div>
+                                                            <div className="font-medium text-gray-900 dark:text-white">
+                                                                {assignment.title}
                                                             </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="text-right text-xs">
-                                                        <div className="font-mono text-pink-600 dark:text-pink-400">
-                                                            {dueDate.toLocaleDateString('en-GB', {
-                                                                month: 'short',
-                                                                day: 'numeric'
-                                                            })}
+                                                            {assignment.course_name && (
+                                                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                                                    {assignment.course_name}
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                        {assignment.priority && (
-                                                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${assignment.priority === 'high' ? 'bg-red-100 text-red-600' :
-                                                                assignment.priority === 'medium' ? 'bg-yellow-100 text-yellow-600' :
-                                                                    'bg-gray-100 text-gray-600'
-                                                                }`}>
-                                                                {assignment.priority}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </li>
-                                            );
-                                        })}
+                                                        <div className="text-right text-xs">
+                                                            <div className="font-mono text-pink-600 dark:text-pink-400">
+                                                                {dueDate.toLocaleDateString("en-GB", {
+                                                                    month: "short",
+                                                                    day: "numeric",
+                                                                })}
+                                                            </div>
+                                                            {assignment.priority && (
+                                                                <span
+                                                                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${assignment.priority === "high"
+                                                                            ? "bg-red-100 text-red-600"
+                                                                            : assignment.priority === "medium"
+                                                                                ? "bg-yellow-100 text-yellow-600"
+                                                                                : "bg-gray-100 text-gray-600"
+                                                                        }`}
+                                                                >
+                                                                    {assignment.priority}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </li>
+                                                );
+                                            })}
                                     </ul>
                                 )}
                             </div>
@@ -167,7 +188,9 @@ export default function StudentDashboardClient({
                                 </h3>
 
                                 <p className="text-gray-700 dark:text-gray-300 font-medium">
-                                    {todayClasses.length === 0 ? "No classes today" : `${todayClasses.length} scheduled`}
+                                    {todayClasses.length === 0
+                                        ? "No classes today"
+                                        : `${todayClasses.length} scheduled`}
                                 </p>
 
                                 {todayClasses.length > 0 && (
@@ -181,7 +204,9 @@ export default function StudentDashboardClient({
                                             </li>
                                         ))}
                                         {todayClasses.length > 4 && (
-                                            <li className="text-gray-400 text-xs">...and {todayClasses.length - 4} more</li>
+                                            <li className="text-gray-400 text-xs">
+                                                ...and {todayClasses.length - 4} more
+                                            </li>
                                         )}
                                     </ul>
                                 )}
@@ -199,7 +224,6 @@ export default function StudentDashboardClient({
                             </p>
                             <p className="text-sm text-gray-500">Keep it going!</p>
                         </div>
-
                     </section>
 
                     {/* Mochi */}
@@ -209,7 +233,6 @@ export default function StudentDashboardClient({
                             Mochi is cheering for you! 🎉
                         </p>
                     </div>
-
                 </main>
             </div>
 
