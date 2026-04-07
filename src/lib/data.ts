@@ -30,9 +30,9 @@ export async function getStudentData(userId: string) {
   }
 
   const now = new Date();
-  const todayWeekday = now.toLocaleString('en-US', { 
-    weekday: 'long', 
-    timeZone: 'Africa/Lagos' 
+  const todayWeekday = now.toLocaleString('en-US', {
+    weekday: 'long',
+    timeZone: 'Africa/Lagos'
   }).toLowerCase();
 
   console.log('DEBUG getStudentData - Weekday:', todayWeekday, 'UserID:', userId);
@@ -250,14 +250,14 @@ export async function calculateWakeUpTime(userId: string): Promise<{
   // 1. Get earliest class today
   const classRes = await pool.query(
     `SELECT 
-       name, 
-       start_time::text AS start_time,
-       location
-     FROM courses
-     WHERE user_id = $1 
-       AND $2 = ANY(days)
-     ORDER BY start_time ASC
-     LIMIT 1`,
+     name, 
+     start_time::text AS start_time,
+     location
+   FROM courses
+   WHERE user_id = $1 
+     AND LOWER($2) = ANY(SELECT LOWER(d) FROM unnest(days) d)
+   ORDER BY start_time ASC
+   LIMIT 1`,
     [userId, todayWeekday]
   );
 
