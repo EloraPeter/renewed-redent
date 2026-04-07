@@ -24,7 +24,7 @@ type ClassItem = {
     end_time?: string;
     location?: string;
     code?: string;
-        weekday?: string;  
+    weekday?: string;
 
 };
 
