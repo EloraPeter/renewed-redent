@@ -20,65 +20,59 @@ export type AssignmentItem = {
 // ──────────────────────────────────────────────
 // Student data 
 // ──────────────────────────────────────────────
+
 export async function getStudentData(userId: string) {
   noStore();
-  const today = new Date().toISOString().split("T")[0];
 
-  // Try to get wake-up time from routines
-  const wakeUpRes = await pool.query(
-    `SELECT SUM(duration_minutes) AS total_prep_min
-     FROM routines
-     WHERE user_id = $1
-       AND affects_wake_up = true
-       AND schedule_type = 'daily'`,
-    [userId]
-  );
+  const todayWeekday = new Date().toLocaleString('en-US', {
+    weekday: 'long',
+    timeZone: 'Africa/Lagos'
+  }).toLowerCase();
 
-  const totalPrep = wakeUpRes.rows[0]?.total_prep_min ?? 0;
-  const suggestedWakeUp = totalPrep > 0
-    ? `${Math.floor(totalPrep / 60)}h ${totalPrep % 60}m prep → wake up early`
-    : 'Flexible wake-up';
+  // Get full wake-up calculation (this is your best logic)
+  const wakeUpData = await calculateWakeUpTime(userId);
 
-  // Today's classes 
-  const todayWeekday = new Date().toLocaleString('en-US', { weekday: 'long', timeZone: 'Africa/Lagos' }).toLowerCase();
- 
+  // Today's classes (reuse same query as calculateWakeUpTime for consistency)
   const classesRes = await pool.query(
     `SELECT 
-     name, 
-     code,
-     start_time::text AS start_time,
-     end_time::text AS end_time,
-     location
-   FROM courses
-   WHERE user_id = $1 
-     AND $2 = ANY(days)
-   ORDER BY start_time ASC`,
-    [userId, todayWeekday]  // todayWeekday from earlier
+       name, 
+       code,
+       start_time::text AS start_time,
+       end_time::text AS end_time,
+       location
+     FROM courses
+     WHERE user_id = $1 
+       AND $2 = ANY(days)
+     ORDER BY start_time ASC`,
+    [userId, todayWeekday]
   );
 
   const todayClasses = classesRes.rows as ClassItem[];
 
-  // Upcoming assignments 
+  // Upcoming assignments (improved)
   const assignmentsRes = await pool.query(
-    `SELECT a.title, a.due_date::text AS due_date
+    `SELECT 
+       a.title, 
+       a.due_date::text AS due_date,
+       a.priority,
+       c.name AS course_name
      FROM assignments a
+     JOIN courses c ON a.course_id = c.id
      WHERE a.user_id = $1
-       AND a.due_date >= CURRENT_DATE
-       AND a.due_date <= CURRENT_DATE + INTERVAL '7 days'
+       AND a.due_date >= CURRENT_TIMESTAMP
+       AND a.status != 'submitted'
      ORDER BY a.due_date ASC
-     LIMIT 5`,
+     LIMIT 6`,
     [userId]
   );
-  const upcomingAssignments = assignmentsRes.rows as AssignmentItem[];
 
-  // NEW: Full wake-up calculation
-  const wakeUpData = await calculateWakeUpTime(userId);
+  const upcomingAssignments = assignmentsRes.rows as AssignmentItem[];
 
   return {
     wakeUpTime: wakeUpData.wakeUpTime,
     firstClass: wakeUpData.firstClass,
     totalPrepMinutes: wakeUpData.totalPrepMinutes,
-    message: wakeUpData.message,
+    message: wakeUpData.message || `You have ${todayClasses.length} class(es) today. Stay focused!`,
     todayClasses,
     upcomingAssignments,
   };
