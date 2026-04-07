@@ -1,5 +1,6 @@
 // src/lib/data.ts
 import pool from "@/lib/db";
+import { unstable_noStore as noStore } from 'next/cache';
 // Remove this line unless you actually need it later:
 // import { auth } from "@/auth";
 
@@ -20,6 +21,7 @@ export type AssignmentItem = {
 // Student data 
 // ──────────────────────────────────────────────
 export async function getStudentData(userId: string) {
+  noStore();
   const today = new Date().toISOString().split("T")[0];
 
   // Try to get wake-up time from routines
