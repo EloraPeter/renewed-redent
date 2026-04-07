@@ -1,47 +1,3 @@
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { Moon, Sun } from "lucide-react";
-
-// export default function DarkModeToggle() {
-//   const [darkMode, setDarkMode] = useState<boolean | null>(null);
-
-//   useEffect(() => {
-//     const isDark =
-//       localStorage.theme === "dark" ||
-//       (!("theme" in localStorage) &&
-//         window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-//     setDarkMode(isDark);
-//     document.documentElement.classList.toggle("dark", isDark);
-//   }, []);
-
-//   if (darkMode === null) return null; // ⛔ Prevent hydration mismatch
-
-//   const toggle = () => {
-//     const next = !darkMode;
-//     setDarkMode(next);
-
-//     document.documentElement.classList.toggle("dark", next);
-//     localStorage.theme = next ? "dark" : "light";
-//   };
-
-//   return (
-//     <button
-//       onClick={toggle}
-//       className="fixed top-4 right-4 p-3 rounded-full bg-white dark:bg-gray-800 shadow-xl hover:scale-110 transition z-50 ring-1 ring-orange-400/40"
-//       aria-label="Toggle dark mode"
-//     >
-//       {darkMode ? (
-//         <Sun className="w-6 h-6 text-yellow-400" />
-//       ) : (
-//         <Moon className="w-6 h-6 text-gray-700 dark:text-gray-200" />
-//       )}
-//     </button>
-//   );
-// }
-
-
 // src/components/DarkModeToggle.tsx
 "use client";
 
@@ -83,7 +39,7 @@ export default function DarkModeToggle() {
       {darkMode ? (
         <Sun className="w-6 h-6 text-yellow-400" />
       ) : (
-        <Moon className="w-6 h-6 text-gray-700" />
+        <Moon className="w-6 h-6 text-gray-700 dark:text-gray-200" />
       )}
     </button>
   );
