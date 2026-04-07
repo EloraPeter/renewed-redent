@@ -9,20 +9,17 @@ export default function DashboardClientWrapper({
     children: React.ReactNode;
 }) {
     return (
-        <>
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 antialiased">
-                <PullToRefresh />
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 antialiased">
+            <PullToRefresh />
+            
+            <main className="pt-20 px-4 md:px-6 lg:px-8 pb-24 max-w-7xl mx-auto">
+                {children}
+            </main>
 
-                <main className="pt-4 px-4 md:px-6 lg:px-8 pb-24 max-w-7xl mx-auto">
-                    {children}
-                </main>
-
-                {/* Floating Mochi placeholder */}
-                <div className="fixed bottom-6 right-6 text-5xl opacity-70 pointer-events-none z-10">
-                    🐹
-                </div>
+            {/* Floating Mochi - ensure dark mode visibility */}
+            <div className="fixed bottom-6 right-6 text-5xl opacity-80 pointer-events-none z-10 filter dark:brightness-125">
+                🐹
             </div>
-        </>
-
+        </div>
     );
 }
