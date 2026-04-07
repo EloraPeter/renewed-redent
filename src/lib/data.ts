@@ -20,9 +20,14 @@ export type AssignmentItem = {
 // ──────────────────────────────────────────────
 // Student data 
 // ──────────────────────────────────────────────
+// src/lib/data.ts
 
 export async function getStudentData(userId: string) {
   noStore();
+
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
 
   const now = new Date();
   const todayWeekday = now.toLocaleString('en-US', { 
@@ -30,51 +35,55 @@ export async function getStudentData(userId: string) {
     timeZone: 'Africa/Lagos' 
   }).toLowerCase();
 
-  console.log('=== DEBUG getStudentData ===');
-  console.log('Today (Lagos):', now.toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
-  console.log('Detected weekday:', todayWeekday);
-  console.log('User ID:', userId);
+  console.log('DEBUG getStudentData - Weekday:', todayWeekday, 'UserID:', userId);
 
-  // 1. Check what courses exist for this user
-  const allCourses = await pool.query(
-    `SELECT id, name, code, days FROM courses WHERE user_id = $1`,
-    [userId]
-  );
-  console.log('All user courses:', allCourses.rows);
+  // Get wake-up data
+  const wakeUpData = await calculateWakeUpTime(userId);
 
-  // 2. Check today's classes query
+  // Today's classes - more robust query
   const classesRes = await pool.query(
-    `SELECT name, start_time::text, days 
-     FROM courses 
-     WHERE user_id = $1 AND $2 = ANY(days)`,
+    `SELECT 
+       name, 
+       code,
+       start_time::text AS start_time,
+       end_time::text AS end_time,
+       location
+     FROM courses
+     WHERE user_id = $1 
+       AND LOWER($2) = ANY(SELECT LOWER(d) FROM unnest(days) d)
+     ORDER BY start_time ASC`,
     [userId, todayWeekday]
   );
-  console.log(`Today's classes found: ${classesRes.rows.length}`, classesRes.rows);
-
-  const wakeUpData = await calculateWakeUpTime(userId);
-  console.log('WakeUpData returned:', wakeUpData);
 
   const todayClasses = classesRes.rows as ClassItem[];
 
+  // Upcoming assignments
   const assignmentsRes = await pool.query(
-    `SELECT a.title, a.due_date::text, c.name as course_name 
-     FROM assignments a 
-     JOIN courses c ON a.course_id = c.id 
-     WHERE a.user_id = $1 AND a.due_date >= CURRENT_TIMESTAMP 
-     LIMIT 5`,
+    `SELECT 
+       a.title, 
+       a.due_date::text AS due_date,
+       a.priority,
+       c.name AS course_name
+     FROM assignments a
+     JOIN courses c ON a.course_id = c.id
+     WHERE a.user_id = $1
+       AND a.due_date > NOW()
+       AND a.status != 'submitted'
+     ORDER BY a.due_date ASC
+     LIMIT 6`,
     [userId]
   );
-  console.log('Upcoming assignments:', assignmentsRes.rows);
 
   return {
     wakeUpTime: wakeUpData.wakeUpTime || "--:--",
     firstClass: wakeUpData.firstClass,
     totalPrepMinutes: wakeUpData.totalPrepMinutes || 0,
-    message: wakeUpData.message || "Let's make today productive!",
+    message: wakeUpData.message || `Good ${todayWeekday === 'friday' ? 'Friday' : 'day'}, you have ${todayClasses.length} class(es) today!`,
     todayClasses,
     upcomingAssignments: assignmentsRes.rows as AssignmentItem[],
   };
 }
+
 // ──────────────────────────────────────────────
 // Lecturer data 
 // ──────────────────────────────────────────────
