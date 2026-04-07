@@ -241,6 +241,7 @@ export async function calculateWakeUpTime(userId: string): Promise<{
   totalPrepMinutes: number;
   message?: string;
 }> {
+  noStore();
   const todayWeekday = new Date().toLocaleString('en-US', {
     weekday: 'long',
     timeZone: 'Africa/Lagos'
