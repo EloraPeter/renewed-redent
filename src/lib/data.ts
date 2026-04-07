@@ -24,60 +24,57 @@ export type AssignmentItem = {
 export async function getStudentData(userId: string) {
   noStore();
 
-  const todayWeekday = new Date().toLocaleString('en-US', {
-    weekday: 'long',
-    timeZone: 'Africa/Lagos'
+  const now = new Date();
+  const todayWeekday = now.toLocaleString('en-US', { 
+    weekday: 'long', 
+    timeZone: 'Africa/Lagos' 
   }).toLowerCase();
 
-  // Get full wake-up calculation (this is your best logic)
-  const wakeUpData = await calculateWakeUpTime(userId);
+  console.log('=== DEBUG getStudentData ===');
+  console.log('Today (Lagos):', now.toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
+  console.log('Detected weekday:', todayWeekday);
+  console.log('User ID:', userId);
 
-  // Today's classes (reuse same query as calculateWakeUpTime for consistency)
+  // 1. Check what courses exist for this user
+  const allCourses = await pool.query(
+    `SELECT id, name, code, days FROM courses WHERE user_id = $1`,
+    [userId]
+  );
+  console.log('All user courses:', allCourses.rows);
+
+  // 2. Check today's classes query
   const classesRes = await pool.query(
-    `SELECT 
-       name, 
-       code,
-       start_time::text AS start_time,
-       end_time::text AS end_time,
-       location
-     FROM courses
-     WHERE user_id = $1 
-       AND $2 = ANY(days)
-     ORDER BY start_time ASC`,
+    `SELECT name, start_time::text, days 
+     FROM courses 
+     WHERE user_id = $1 AND $2 = ANY(days)`,
     [userId, todayWeekday]
   );
+  console.log(`Today's classes found: ${classesRes.rows.length}`, classesRes.rows);
+
+  const wakeUpData = await calculateWakeUpTime(userId);
+  console.log('WakeUpData returned:', wakeUpData);
 
   const todayClasses = classesRes.rows as ClassItem[];
 
-  // Upcoming assignments (improved)
   const assignmentsRes = await pool.query(
-    `SELECT 
-       a.title, 
-       a.due_date::text AS due_date,
-       a.priority,
-       c.name AS course_name
-     FROM assignments a
-     JOIN courses c ON a.course_id = c.id
-     WHERE a.user_id = $1
-       AND a.due_date >= CURRENT_TIMESTAMP
-       AND a.status != 'submitted'
-     ORDER BY a.due_date ASC
-     LIMIT 6`,
+    `SELECT a.title, a.due_date::text, c.name as course_name 
+     FROM assignments a 
+     JOIN courses c ON a.course_id = c.id 
+     WHERE a.user_id = $1 AND a.due_date >= CURRENT_TIMESTAMP 
+     LIMIT 5`,
     [userId]
   );
-
-  const upcomingAssignments = assignmentsRes.rows as AssignmentItem[];
+  console.log('Upcoming assignments:', assignmentsRes.rows);
 
   return {
-    wakeUpTime: wakeUpData.wakeUpTime,
+    wakeUpTime: wakeUpData.wakeUpTime || "--:--",
     firstClass: wakeUpData.firstClass,
-    totalPrepMinutes: wakeUpData.totalPrepMinutes,
-    message: wakeUpData.message || `You have ${todayClasses.length} class(es) today. Stay focused!`,
+    totalPrepMinutes: wakeUpData.totalPrepMinutes || 0,
+    message: wakeUpData.message || "Let's make today productive!",
     todayClasses,
-    upcomingAssignments,
+    upcomingAssignments: assignmentsRes.rows as AssignmentItem[],
   };
 }
-
 // ──────────────────────────────────────────────
 // Lecturer data 
 // ──────────────────────────────────────────────
