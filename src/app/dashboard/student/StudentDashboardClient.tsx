@@ -14,7 +14,7 @@ type Props = {
     todayClasses: any[];
     upcomingAssignments: any[];
     message?: string;
-
+    streak?: number;
 };
 
 export default function StudentDashboardClient({
@@ -24,9 +24,9 @@ export default function StudentDashboardClient({
     totalPrepMinutes,
     todayClasses,
     upcomingAssignments,
+    streak = 1,
 }: Props) {
     const [currentTimeGreeting, setCurrentTimeGreeting] = useState("");
-    const [streakProgress, setStreakProgress] = useState(7); // default 7 days
 
     useEffect(() => {
         const hour = new Date().getHours();
@@ -192,7 +192,9 @@ export default function StudentDashboardClient({
                                 <FlameIcon className="w-5 h-5" />
                                 Streak
                             </h3>
-                            <p className="text-3xl font-extrabold text-yellow-600 dark:text-yellow-400">{streakProgress} days 🔥</p>
+                            <p className="text-3xl font-extrabold text-yellow-600 dark:text-yellow-400">
+                                {streak} days 🔥
+                            </p>
                             <p className="text-sm text-gray-500">Keep it going!</p>
                         </div>
 

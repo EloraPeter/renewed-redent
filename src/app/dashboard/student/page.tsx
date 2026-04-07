@@ -24,6 +24,7 @@ export default async function StudentDashboardPage() {
     message,
     todayClasses,
     upcomingAssignments,
+    streak,          
   } = await getStudentData(userId);
 
   return (
@@ -35,6 +36,7 @@ export default async function StudentDashboardPage() {
       message={message}
       todayClasses={todayClasses}
       upcomingAssignments={upcomingAssignments}
+      streak={streak}         
     />
   );
 }
