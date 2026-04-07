@@ -81,7 +81,9 @@ export default function StudentDashboardClient({
                                 Wake-Up Suggestion
                             </h2>
                             <span className="text-sm text-gray-400 dark:text-gray-300">
-                                Prep & commute: ~{totalPrepMinutes} min
+                                <Link href="/dashboard/student/routines" passHref>
+                                    Prep & commute: ~{totalPrepMinutes} min
+                                </Link>
                             </span>
                         </div>
                         <div className="flex items-center gap-6">
