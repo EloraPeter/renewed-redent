@@ -111,9 +111,23 @@ export default function StudentDashboardClient({
                                         {upcomingAssignments.length}
                                     </span>
                                 </div>
+
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                     Don’t let anything slip!
                                 </p>
+
+                                {upcomingAssignments.length > 0 && (
+                                    <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1 mt-2">
+                                        {upcomingAssignments.slice(0, 3).map((assignment: any, i: number) => (
+                                            <li key={i} className="flex justify-between">
+                                                <span>{assignment.title}</span>
+                                                <span className="text-pink-600 text-xs">
+                                                    {new Date(assignment.due_date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' })}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         </Link>
 

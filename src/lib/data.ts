@@ -68,11 +68,13 @@ export async function getStudentData(userId: string) {
      JOIN courses c ON a.course_id = c.id
      WHERE a.user_id = $1
        AND a.due_date > NOW()
-       AND a.status != 'submitted'
+       AND (a.status IS NULL OR a.status != 'submitted')
      ORDER BY a.due_date ASC
      LIMIT 6`,
     [userId]
   );
+
+  const upcomingAssignments = assignmentsRes.rows;
 
   return {
     wakeUpTime: wakeUpData.wakeUpTime || "--:--",
