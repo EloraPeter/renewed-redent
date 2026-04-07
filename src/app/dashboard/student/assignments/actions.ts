@@ -40,7 +40,7 @@ export async function createAssignment(formData: FormData) {
     `,
     [session.user.id, courseId, title, dueDate, priority, fileUrl]
   );
-
+revalidatePath('/dashboard/student', 'page');
   revalidatePath("/dashboard/student/assignments");
   return { success: true };
 }
