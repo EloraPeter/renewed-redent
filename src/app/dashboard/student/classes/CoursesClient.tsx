@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import Sidebar from "@/components/Sidebar";
 import toast from 'react-hot-toast';
 import { Menu, BookOpenIcon, CalendarIcon, FlameIcon, CoffeeIcon } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 
 interface Course {
@@ -46,6 +47,8 @@ export default function CoursesClient({
     // Controlled state for edit days
     const [editDays, setEditDays] = useState<string[]>([]);
 
+    const router = useRouter();
+
     const addFormRef = useRef<HTMLFormElement>(null);
     const editFormRef = useRef<HTMLFormElement>(null);
 
@@ -70,6 +73,7 @@ export default function CoursesClient({
             toast.success('Course added!');
             setIsAddOpen(false);
             addFormRef.current.reset();
+            router.refresh();  
         }
     };
 
@@ -86,6 +90,7 @@ export default function CoursesClient({
         } else {
             toast.success('Course updated!');
             setEditingCourse(null);
+            router.refresh();  
         }
     };
 
@@ -98,6 +103,7 @@ export default function CoursesClient({
             toast.error(result.error || 'Failed to delete course');
         } else {
             toast.success('Course deleted!');
+            router.refresh(); 
         }
     };
 
