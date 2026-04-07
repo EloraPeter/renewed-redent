@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { getUserRoutines, createRoutine, updateRoutine, deleteRoutine } from '@/actions/routines';
 import RoutinesClient from './RoutinesClient';
 import { Toaster } from 'react-hot-toast';

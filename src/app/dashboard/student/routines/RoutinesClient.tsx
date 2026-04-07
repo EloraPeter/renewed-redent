@@ -6,6 +6,7 @@ import { Trash2, Edit, Plus, X } from 'lucide-react';
 import Sidebar from "@/components/Sidebar";
 import toast from 'react-hot-toast';
 import { Menu, BookOpenIcon, CalendarIcon, FlameIcon, CoffeeIcon } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 
 interface RoutinesClientProps {
@@ -58,6 +59,7 @@ export default function RoutinesClient({
             setIsAddOpen(false);
             addFormRef.current.reset();
             setAddType('daily');
+            
         }
     };
 
