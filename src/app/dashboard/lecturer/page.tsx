@@ -1,6 +1,7 @@
 // src/app/dashboard/lecturer/page.tsx
 
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import NotificationScheduler from "@/components/NotificationScheduler";
 import { getLecturerData } from "@/lib/data";
@@ -14,8 +15,8 @@ function SkeletonCard() {
 }
 
 export default async function LecturerDashboard() {
-    const session = await getServerSession();
-    if (!session?.user) redirect("/login");
+const session = await getServerSession(authOptions);    
+if (!session?.user) redirect("/login");
 
     const userId = session.user.id as string;
     const userName = session.user.name || session.user.email?.split("@")[0] || "Lecturer";
