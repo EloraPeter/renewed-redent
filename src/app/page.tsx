@@ -13,13 +13,13 @@ const fadeUp = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden bg-white dark:bg-gray-900">
 
       {/* ───────── HERO ───────── */}
-      <section className="relative max-w-7xl mx-auto px-5 pt-16 pb-20 md:pt-24 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
+      <section className="relative max-w-7xl mx-auto px-5 pt-16 pb-20 md:pt-24 md:pt-32 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
 
         {/* Glow blob */}
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-400/20 blur-3xl rounded-full" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-400/20 dark:bg-orange-500/30 blur-3xl rounded-full" />
 
         <motion.div
           initial="hidden"
@@ -28,7 +28,7 @@ export default function Home() {
           transition={{ duration: 0.6 }}
           className="space-y-6 z-10"
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-gray-900 dark:text-white">
             Stay consistent.
             <br />
             Stay motivated.
@@ -38,7 +38,7 @@ export default function Home() {
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-gray-800 dark:text-gray-300 max-w-xl">
+          <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 max-w-xl">
             MochiDo is a gentle but powerful academic reminder system for students
             and lecturers — combining smart scheduling, emotional motivation,
             and adorable accountability.
@@ -48,7 +48,7 @@ export default function Home() {
             <GlowButton href="/signup" label="Get Started Free" />
             <Link
               href="/login"
-              className="px-8 py-4 rounded-xl border border-orange-400/40 text-orange-700 dark:text-orange-300 hover:bg-orange-400/10 transition text-center"
+              className="px-8 py-4 rounded-xl border border-orange-400/40 dark:border-orange-400/60 text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-500/5 transition text-center font-medium"
             >
               Login
             </Link>
@@ -62,7 +62,7 @@ export default function Home() {
           transition={{ duration: 0.8 }}
           className="relative w-full h-[280px] sm:h-[340px] md:h-[420px]"
         >
-          <div className="absolute inset-0 bg-orange-400/30 blur-3xl rounded-full" />
+          <div className="absolute inset-0 bg-orange-400/30 dark:bg-orange-500/40 blur-3xl rounded-full" />
           <Image
             src={mochihappy}
             alt="Mochi mascot"
@@ -73,7 +73,7 @@ export default function Home() {
       </section>
 
       {/* ───────── STATS ───────── */}
-      <section className="py-14 bg-white/70 dark:bg-gray-900/70 backdrop-blur">
+      <section className="py-14 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <Stat value="24/7" label="Smart Reminders" />
           <Stat value="100%" label="Deadline Coverage" />
@@ -83,10 +83,11 @@ export default function Home() {
       </section>
 
       {/* ───────── HOW IT WORKS ───────── */}
-      <section className="py-20">
+      <section className="py-20 bg-gray-50 dark:bg-gray-800/50">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-orange-600">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
             How MochiDo works
+            <span className="block text-orange-600 dark:text-orange-400 mt-2">🐹</span>
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -104,9 +105,9 @@ export default function Home() {
       </section>
 
       {/* ───────── FEATURES ───────── */}
-      <section className="py-20 bg-gradient-to-b from-orange-100/50 to-transparent">
+      <section className="py-20 bg-gradient-to-b from-orange-50/50 to-gray-50/50 dark:from-orange-500/5 dark:to-gray-800/30">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-14 text-gray-900 dark:text-white">
             Why MochiDo feels different
           </h2>
 
@@ -131,7 +132,7 @@ export default function Home() {
       </section>
 
       {/* ───────── FINAL CTA ───────── */}
-      <section className="py-24">
+      <section className="py-24 bg-gradient-to-t from-gray-50/50 to-transparent dark:from-gray-900/50 dark:to-transparent">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -139,10 +140,10 @@ export default function Home() {
           variants={fadeUp}
           className="max-w-4xl mx-auto px-6 text-center space-y-6"
         >
-          <h2 className="text-4xl font-extrabold">
-            Your academics don’t have to hurt.
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
+            Your academics don't have to hurt.
           </h2>
-          <p className="text-gray-700 dark:text-gray-300">
+          <p className="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
             Let Mochi help you stay consistent, calm, and in control.
           </p>
           <GlowButton href="/signup" label="Start with Mochi 🐹" />
@@ -158,10 +159,10 @@ function GlowButton({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="relative inline-flex items-center justify-center px-8 py-4 font-semibold text-white rounded-xl bg-green-600 hover:bg-green-700 transition shadow-lg"
+      className="group relative inline-flex items-center justify-center px-8 py-4 font-semibold text-white rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-xl hover:shadow-green-500/25 active:scale-95"
     >
-      <span className="absolute inset-0 blur-xl bg-green-500/40 rounded-xl" />
-      <span className="relative">{label}</span>
+      <span className="absolute inset-0 blur-xl bg-gradient-to-r from-green-500/50 to-green-600/50 dark:from-green-400/60 dark:to-green-500/60 rounded-xl opacity-75 group-hover:opacity-100 transition" />
+      <span className="relative z-10">{label}</span>
     </Link>
   );
 }
@@ -170,15 +171,15 @@ function FeatureCard({ title, description, img }: any) {
   return (
     <motion.div
       whileHover={{ y: -6 }}
-      className="relative bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-xl border border-orange-400/20 hover:shadow-orange-400/40 transition"
+      className="relative group bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-xl border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl hover:shadow-orange-400/25 hover:border-orange-400/40 transition-all duration-300 overflow-hidden"
     >
-      <div className="absolute inset-0 rounded-2xl bg-orange-400/10 blur-2xl opacity-0 hover:opacity-100 transition" />
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-400/5 to-orange-500/5 dark:from-orange-500/10 dark:to-orange-600/10 blur-xl group-hover:opacity-100 transition-opacity duration-500" />
       <div className="relative z-10 space-y-4">
-        <div className="w-20 h-20 relative">
+        <div className="w-20 h-20 mx-auto relative bg-gradient-to-br from-orange-50/50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/20 rounded-2xl p-4">
           <Image src={img} alt={title} fill className="object-contain" />
         </div>
-        <h3 className="text-xl font-semibold text-orange-600">{title}</h3>
-        <p className="text-gray-700 dark:text-gray-300">{description}</p>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">{title}</h3>
+        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{description}</p>
       </div>
     </motion.div>
   );
@@ -186,9 +187,9 @@ function FeatureCard({ title, description, img }: any) {
 
 function StepCard({ step, title, children }: any) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center">
-      <div className="text-4xl font-extrabold text-orange-500 mb-3">{step}</div>
-      <h4 className="text-xl font-semibold mb-2">{title}</h4>
+    <div className="group bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-xl border border-gray-200/50 dark:border-gray-700/50 hover:border-orange-400/40 transition-all duration-300 hover:bg-white dark:hover:bg-gray-900">
+      <div className="text-4xl font-extrabold bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-400 dark:to-orange-500 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform">{step}</div>
+      <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{title}</h4>
       <p className="text-gray-700 dark:text-gray-300">{children}</p>
     </div>
   );
@@ -196,9 +197,9 @@ function StepCard({ step, title, children }: any) {
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div>
-      <div className="text-3xl font-extrabold text-orange-600">{value}</div>
-      <div className="text-sm text-gray-600 dark:text-gray-400">{label}</div>
+    <div className="group">
+      <div className="text-3xl font-extrabold bg-gradient-to-r from-orange-600 to-orange-500 dark:from-orange-400 dark:to-orange-300 bg-clip-text text-transparent group-hover:scale-110 transition-all duration-300">{value}</div>
+      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 font-medium">{label}</div>
     </div>
   );
 }
