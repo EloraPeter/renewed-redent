@@ -56,8 +56,8 @@ export async function createRoutine(formData: FormData) {
     finalDays = daysRaw.length > 0 ? daysRaw : ['monday'];
   }
 
-  const duration = durationStr && durationStr.trim() !== '' 
-    ? parseInt(durationStr, 10) 
+  const duration = durationStr && durationStr.trim() !== ''
+    ? parseInt(durationStr, 10)
     : 15;
 
   if (duration <= 0) {
@@ -79,6 +79,7 @@ export async function createRoutine(formData: FormData) {
     ]
   );
 
+  revalidatePath('/dashboard/student');
   revalidatePath('/dashboard/student/routines');
   return { success: true };
 }
@@ -107,8 +108,8 @@ export async function updateRoutine(id: string, formData: FormData) {
     finalDays = daysRaw.length > 0 ? daysRaw : ['monday'];
   }
 
-  const duration = durationStr && durationStr.trim() !== '' 
-    ? parseInt(durationStr, 10) 
+  const duration = durationStr && durationStr.trim() !== ''
+    ? parseInt(durationStr, 10)
     : 15;
 
   if (duration <= 0) {
@@ -143,6 +144,7 @@ export async function updateRoutine(id: string, formData: FormData) {
       return { error: 'Routine not found or not owned by you' };
     }
 
+    revalidatePath('/dashboard/student');
     revalidatePath('/dashboard/student/routines');
     return { success: true };
   } catch (err) {
@@ -158,6 +160,7 @@ export async function deleteRoutine(id: string) {
     [id, userId]
   );
   if (res.rowCount === 0) return { error: 'Not found or not yours' };
+  revalidatePath('/dashboard/student');
 
   revalidatePath('/dashboard/student/routines');
   return { success: true };
